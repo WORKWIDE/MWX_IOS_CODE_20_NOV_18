@@ -790,7 +790,7 @@ function showAlert(alertmessage, title, callBack_func) {
 //var webServiceUrl="http://qwork-demo.quintica.com/Api/";
 //var webServiceUrl="http://app.workwidemobile.com/Api/";
 
-//local
+//local server
 var webServiceUrl = "http://192.168.1.145/quintica/Api/";
 
 
