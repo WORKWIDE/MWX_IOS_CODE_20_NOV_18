@@ -1,0 +1,1321 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="description" content="">
+            <meta name="keywords" content="">
+                <meta name="author" content="">
+                    <!--<meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: ms-appdata: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *">-->
+                    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+                        <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
+                            <link rel="stylesheet" type="text/css" href="css/index.css">
+                                <link rel="stylesheet" type="text/css" href="css/jquery.raty.css">
+                                    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAf6PqXT6UJuQASdKM65lnUDYmUebPa-fk"></script>
+                                    <link rel="stylesheet" href="css/jquery.mobile-1.4.5/jquery.mobile-1.4.5.min.css" />
+                                    <script src="js/jquery-1.11.1/jquery-1.11.1.min.js"></script>
+                                    <script src="js/signaturepad.js"></script>
+                                    <script src="js/jquery.mobile-1.4.5/jquery.mobile-1.4.5.min.js"></script>
+                                    <script src="js/jquery.raty.js"></script>
+                                    <script src="https://www.gstatic.com/firebasejs/3.9.0/firebase.js"></script>
+                                    <script>
+                                        // Initialize Firebase
+                                        var config = {
+                                            apiKey: "AIzaSyCJXY0n70nfMJSPjNwfeVWfcDRerhvlAGw",
+                                            authDomain: "workwide-34009.firebaseapp.com",
+                                            databaseURL: "https://workwide-34009.firebaseio.com",
+                                            projectId: "workwide-34009",
+                                            storageBucket: "workwide-34009.appspot.com",
+                                            messagingSenderId: "535739481079"
+                                        };
+                                    firebase.initializeApp(config);
+                                        </script>
+                                    <title>WorkWide</title>
+                                    </head>
+    <body oncopy="return false">
+        <!--        start login page -->
+        <div data-role="page" id="loginPg" class="bodycolor">
+            <center style="margin-top:25%;"><img src="img/workwide_logo.png" alt="Avatar" class="imgcontainer" /></center>
+            <div class="container">
+                <div style="position: relative;width: 100%;">
+                    <input type="text" class="input_type" placeholder="Username" id="userName" name="Username" value="testuser28" required>
+                        <img src="img/user-image.png" class="textIcon" width="26" height="26">
+                            </div>
+                <div style="position: relative;width: 100%;">
+                    <input type="password" class="input_type" placeholder="Password" id="password" name="Password" value="testUser28" required>
+                        <img src="img/lock.png" class="textIcon" width="26" height="26">
+                            </div>
+            </div>
+            <div>
+                <center> <button class="ui-btn btn-color" onclick="loginIn();">CONTINUE</button> </center>
+            </div>
+            <div style="margin-top:20%;">
+                <center><a href="#Forgot_password" data-transition="slide" style="color: #000000;
+                    font-size: 0.65em;
+                    opacity: 0.57;
+                    text-decoration: none;
+                    text-shadow:none !important;">FORGOT YOUR PASSWORD</a></center>
+            </div>
+        </div>
+        <!--        end login page-->
+        <!--  Forgot password Page -->
+        <div data-role="page" class="bodycolor" id="Forgot_password">
+            <div data-role="header" data-position="fixed">
+                <h1>Forgot Password</h1>
+                <a href="#loginPg" class="ui-btn ui-nodisc-icon icon-border ui-alt-icon ui-icon-carat-l ui-btn-icon-notext" data-transition="slide" data-direction="reverse">Back</a>
+            </div>
+            <!-- /header -->
+            <center style="margin-top:20%;"><img src="img/workwide_logo.png" alt="Avatar" class="imgcontainer" /></center>
+            <div class="container">
+                <div class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-envelope"></i>
+                    <input type="email" class="input_type" name="email" id="email" placeholder="Please enter your email address">
+                        </div>
+            </div>
+            <center><button class="ui-btn btn-color" onclick="Reset();">SUBMIT</button></center>
+        </div>
+        <!-- /content -->
+        <!--  Forgot password Page-->
+        <!--  Reset password Page -->
+        <div data-role="page" class="bodycolor" id="Reset_password">
+            <div data-role="header" data-position="fixed">
+                <h1>Reset</h1>
+                <a href="#nav-panel_reset" class="ui-btn ui-nodisc-icon icon-border ui-alt-icon ui-icon-burger ui-btn-icon-notext">Menu</a>
+            </div>
+            <!-- /header -->
+            <div data-role="main" class="pagemargin">
+                <center><img src="img/workwide_logo.png" alt="Avatar" class="imgcontainer" /></center>
+                <input type="password" class="input_type" id="forgotPasswordPgOldPassword" placeholder="Old Password" />
+                <input type="password" class="input_type" id="forgotPasswordPgNewPassword" placeholder="New Password" />
+                <input type="password" class="input_type" id="forgotPasswordPgConfirmNewPassword" placeholder="Confirm New Password" />
+                <div style="width:100%">
+                    <div class="leftBtn">
+                        <a href="#" id="forgotPasswordPgSubmitBtn" class="ui-btn btnFontSize" onclick="changePassword();">Submit</a>
+                    </div>
+                    <div class="rightBtn">
+                        <a href="#" id="forgotPasswordPgCancelBtn" class="ui-btn btnFontSize" onclick="changePage('#Landingpage','slide',true);">Cancel</a>
+                    </div>
+                </div>
+                <br>
+            </div>
+            <!-- /content -->
+            <div data-role="panel" data-animate="true" data-position-fixed="true" class="nav-Drawer" data-display="overlay" id="nav-panel_reset" data-position="left">
+                <ul data-role="listview" class="wborderradius1">
+                    <li data-icon="false"><a href="#" data-rel="close">Close</a></li>
+                    <li data-icon="false">
+                        <a href="#" class="woborderradius profile-color" style="height: 110px !important;">
+                            <div class="imageprofile" style="height:80px;width:80px;"></div>
+                        </a>
+                    </li>
+                    <li data-icon="carat-d">
+                        <a href="#" class="woborderradius1 profile-color Fsenamelist ui-nodisc-icon" onclick="FSE_details_list_s();" style="box-shadow:none;border:none;">
+                            <p class="fsename"></p>
+                        </a>
+                    </li>
+                    <li data-icon="false" onclick="changePage('#Landingpage','slide', true);"><a href="#panel-fixed-page2" class="textColor panelUl">Home</a></li>
+                    <li data-icon="false" onclick="changePage('#Accepted_tasks_page','slide', true);"><a href="#panel-fixed-page2" class="textColor panelUl">Task</a></li>
+                    <li data-icon="false" onclick="changePage('#Completed_Maintasklist','slide', true);"><a href="#panel-fixed-page2" class="textColor panelUl">History</a></li>
+                    <li data-icon="false" onclick="changePage('#Pending_list','slide', true);"><a href="#panel-fixed-page2" class="textColor panelUl">On Hold</a></li>
+                    <li data-icon="false" data-direction="reverse" onclick="logout();"><a href="#panel-fixed-page2" class="textColor panelUl">Logout</a></li>
+                </ul>
+                <ul data-role="listview" class="FSE_details_list woborderradius" style="display:none;"></ul>
+                <br>
+                <p class="versioncode"></p>
+                <div style="position:absolute;bottom:0px;width: 100%;margin-left:-17px;border-top:1px solid lightgray;">
+                </div>
+            </div>
+            <!--    /panel -->
+        </div>
+        <!--  Reset password Page-->
+        <!--Start landing page-->
+        <div data-role="page" class="bgcolor" id="Landingpage">
+            <div data-role="header" data-position="fixed">
+                <h1>WorkWide</h1>
+                <a href="#nav-panel_landing" class="ui-btn ui-nodisc-icon icon-border ui-alt-icon ui-icon-burger ui-btn-icon-notext">Menu</a>
+                <div><a href="#notificationpage" style="margin-right:5px !important;font-size:10px;background-color:red;border-radius: 40px !important;
+                    color:white;" data-transition="slidedown" class="ui-nodisc-icon ui-btn-right ui-btn-myicon ui-btn ui-btn-inline ui-shadow ui-corner-all" data-role="button" role="button" id="notification_list_count">0</a></div>
+            </div>
+            <!-- /header -->
+            <div data-role="main" class="pagemargin">
+                <center>
+                    <img src="img/user-image.png" id="imageprofile_one" style="display:none;height:120px;width:120px;border-radius:4px;margin: 10% 0% 10% 0%;;">
+                        <img src="img/user-image.png" id="imageprofile" style="display:none;height:100px;width:220px;border-radius:4px;">
+                            </center>
+                <h4 class="textSize">Task details</h4>
+                <ul data-role="listview" data-inset="true">
+                    <li data-icon="false"><a href="#" data-transition="slide" class="textColor wborderradius" onclick="start_click();">Current task in-progress <span id="current" class="ui-li-count">0</span></a></li>
+                </ul>
+                <ul data-role="listview" data-inset="true">
+                    <li data-icon="false"><a href="#Assigned_tasklist_page" class="textColor wborderradius" data-transition="slide">Total tasks assigned <span class="ui-li-count" id="Assigned">0</span></a></li>
+                </ul>
+                <ul data-role="listview" data-inset="true">
+                    <li data-icon="false"><a href="#Completed_Maintasklist" class="textColor wborderradius" data-transition="slide">Total tasks resolved <span class="ui-li-count" id="Completed">0</span></a></li>
+                </ul>
+                <ul data-role="listview" data-inset="true">
+                    <li data-icon="false"><a href="#Accepted_tasks_page" class="textColor wborderradius" data-transition="slide">Total tasks accepted <span class="ui-li-count" id="Accepted">0</span></a></li>
+                </ul>
+                <ul data-role="listview" data-inset="true">
+                    <li data-icon="false"><a href="#Pending_list" class="textColor wborderradius" data-transition="slide">Total tasks on hold <span class="ui-li-count" id="Pending">0</span></a></li>
+                </ul>
+                </ul>
+                <br />
+                <!--<center><button class="ui-btn btn-color" data-mini="true" id="main_button" value="" onclick="start_click();"></button></center>-->
+                <canvas id="uploadCanvas" style="display:none;width:100%;"></canvas>
+            </div>
+            <!-- /content -->
+            <div data-role="panel" data-animate="true" class="nav-Drawer" data-position-fixed="true" data-display="overlay" id="nav-panel_landing" data-position="left">
+                <ul data-role="listview" class="wborderradius1">
+                    <!--<li data-icon="delete"><a href="#" data-rel="close">Close</a></li>-->
+                    <li data-icon="false">
+                        <a href="#" class="woborderradius profile-color" style="height: 110px !important;">
+                            <div class="imageprofile" onclick="profileimage();" style="height:80px;width:80px;"></div>
+                        </a>
+                    </li>
+                    <li data-icon="carat-d">
+                        <a href="#" class="woborderradius1 profile-color Fsenamelist ui-nodisc-icon" onclick="FSE_details_list_s();" style="box-shadow:none;border:none;">
+                            <p class="fsename"></p>
+                        </a>
+                    </li>
+                    <li data-icon="false" onclick="changePage('#Accepted_tasks_page','slide', true);"><a href="#panel-fixed-page2" class="textColor panelUl">Task</a></li>
+                    <li data-icon="false" onclick="changePage('#Completed_Maintasklist','slide', true);"><a href="#panel-fixed-page2" class="textColor panelUl">History</a></li>
+                    <li data-icon="false" onclick="changePage('#Pending_list','slide', true);"><a href="#panel-fixed-page2" class="textColor panelUl">On Hold</a></li>
+                    <li data-icon="false" onclick="changePage('#Reset_password','slide', true);"><a href="#panel-fixed-page2" class="textColor panelUl">Reset Password</a></li>
+                    <li data-icon="false" data-direction="reverse" onclick="logout();"><a href="#panel-fixed-page2" class="textColor panelUl">Logout</a></li>
+                </ul>
+                <ul data-role="listview" class="FSE_details_list woborderradius" style="display:none;"></ul>
+                <br>
+                <p class="versioncode"></p>
+                <div style="position:absolute;bottom:0px;width: 100%;margin-left:-17px;border-top:1px solid lightgray;">
+                    <ul data-role="listview">
+                        <li data-icon="myicon4"><a onclick="Going_Offline();" href="#" class="textOffline ui-nodisc-icon" style="border:none;" data-transition="slide">Go Offline</a></li>
+                    </ul>
+                </div>
+            </div>
+            <!--    /panel onclick="Going_Offline();" -->
+        </div>
+        <!--end of landing page-->
+        <!--Start of Assigned Task Page-->
+        <div data-role="page" class="bgcolor" id="Assigned_tasklist_page">
+            <div data-role="header" data-position="fixed">
+                <h1>Assigned</h1>
+                <a href="#nav-panel-unassigned" class="ui-btn ui-nodisc-icon icon-border ui-alt-icon ui-icon-burger ui-btn-icon-notext">Menu</a>
+            </div>
+            <!-- /header -->
+            <div data-role="main" class="pagemargin">
+                <ul data-role='listview' data-inset='true' data-shadow='false' id="task_view_accepted"></ul>
+            </div>
+            <!-- /content -->
+            <div data-role="panel" data-position-fixed="true" class="nav-Drawer" data-display="overlay" id="nav-panel-unassigned" data-position="left">
+                <ul data-role="listview" class="wborderradius1">
+                    <!--                <li data-icon="delete"><a href="#" data-rel="close">Close</a></li>-->
+                    <li data-icon="false">
+                        <a href="#" class="woborderradius profile-color" style="height: 110px !important;">
+                            <div class="imageprofile" style="height:80px;width:80px;"></div>
+                        </a>
+                    </li>
+                    <li data-icon="carat-d">
+                        <a href="#" class="woborderradius1 profile-color Fsenamelist ui-nodisc-icon" onclick="FSE_details_list_s();" style="box-shadow:none;border:none;">
+                            <p class="fsename"></p>
+                        </a>
+                    </li>
+                    <li data-icon="false" onclick="changePage('#Landingpage','slide', true);"><a href="#panel-fixed-page2" class="textColor panelUl">Home</a></li>
+                    <li data-icon="false" onclick="changePage('#Accepted_tasks_page','slide', true);"><a href="#panel-fixed-page2" class="textColor panelUl">Task</a></li>
+                    <li data-icon="false" onclick="changePage('#Completed_Maintasklist','slide', true);"><a href="#panel-fixed-page2" class="textColor panelUl">History</a></li>
+                    <li data-icon="false" onclick="changePage('#Pending_list','slide', true);"><a href="#panel-fixed-page2" class="textColor panelUl">On Hold</a></li>
+                    <li data-icon="false" data-direction="reverse" onclick="logout();"><a href="#panel-fixed-page2" class="textColor panelUl">Logout</a></li>
+                </ul>
+                <ul data-role="listview" class="FSE_details_list woborderradius" style="display:none;"></ul>
+                <br>
+                <p class="versioncode"></p>
+            </div>
+            <!--    /panel -->
+        </div>
+        <!--end of Assigned  Task Page-->
+        <!--Start of view page Assigned Task Page-->
+        <div data-role="page" class="bgcolor" id="Assigned_view_tasklist_page">
+            <div data-role="header"  class="app_header" data-position="fixed">
+                <h1>View</h1>
+                <a href="#Assigned_tasklist_page" class="ui-btn ui-nodisc-icon icon-border ui-alt-icon ui-icon-carat-l ui-btn-icon-notext" data-transition="slide" data-direction="reverse">Back</a>
+            </div>
+            <!-- /header -->
+            
+            <div class="app_body">
+                <div class="app_map" id="Assigned_page_map" ></div>
+                
+                <ul data-role='listview' class="assign" data-inset='true' data-shadow='false' id="View_page_for_Assigned_task"></ul>
+                
+                <a id="expand" class="float" >
+                    <img src="img/arrow-up.png" class="float_icons" id="fab_icon" >
+                        </a>
+            </div>
+            
+            <!-- /content -->
+            <div class="app_footer" data-role="footer" data-position="fixed"  >
+                <div style="float:left; width: 45%; padding-left: 10px;">
+                    <p id="distance" class="mapText" style="text-decoration: none !important; font-size: 0.8em !important; text-shadow: none !important; font-weight:bold !important; border: none !important;">ETA :</p>
+                </div>
+                <div id="hide_show_buttonsss" style="display:none; padding-right: 10px;">
+                    
+                    <div class="leftBtn">
+                        <p id="Assigned_view_page_reject_button" class="btnFontSize ui-corner-all" onclick="Confirm_To_Accept_Task();">ACCEPT</p>
+                    </div>
+                    <div class="rightBtn">
+                        <p id="Assigned_view_page_accept_button" class="btnFontSize ui-corner-all" onclick="Rejecting_the_task_option();">REJECT</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--end of view page  Assigned  Task Page-->
+        <!--Start Accepted Task Page-->
+        <div data-role="page" class="bgcolor" id="Accepted_tasks_page">
+            <div data-role="header" data-position="fixed">
+                <h1>Accepted</h1>
+                <a href="#nav-panel-assigned" class="ui-btn ui-nodisc-icon icon-border ui-alt-icon ui-icon-burger ui-btn-icon-notext">Menu</a>
+                <!--            <a href="#" onclick="offline_Accepted_pending_task_list()"; class="ui-btn ui-btn-inline ui-icon-myicon1 ui-btn-icon-notext ui-shadow ui-nodisc-icon">Download</a>-->
+            </div>
+            <!-- /header -->
+            <div data-role="main" class="pagemargin">
+                <ul data-role='listview' data-inset='true' data-shadow='false' id="Accepted_Tasks_list"></ul>
+            </div>
+            <!-- /content -->
+            <div data-role="panel" data-position-fixed="true" class="nav-Drawer" data-display="overlay" id="nav-panel-assigned" data-position="left">
+                <ul data-role="listview" class="woborderradius2">
+                    <!--                <li data-icon="delete"><a href="#" data-rel="close">Close</a></li>-->
+                    <li data-icon="false">
+                        <a href="#" class="woborderradius profile-color" style="height: 110px !important;">
+                            <div class="imageprofile" style="height:80px;width:80px;"></div>
+                        </a>
+                    </li>
+                    <li data-icon="carat-d">
+                        <a href="#" class="woborderradius1 profile-color Fsenamelist ui-nodisc-icon" onclick="FSE_details_list_s();" style="box-shadow:none;border:none;">
+                            <p class="fsename"></p>
+                        </a>
+                    </li>
+                    <li data-icon="false" onclick="changePage('#Landingpage','slide', true);"><a href="#panel-fixed-page2" class="textColor panelUl">Home</a></li>
+                    <li data-icon="false" onclick="changePage('#Accepted_tasks_page','slide', true);"><a href="#panel-fixed-page2" class="textColor panelUl">Task</a></li>
+                    <li data-icon="false" onclick="changePage('#Completed_Maintasklist','slide', true);"><a href="#panel-fixed-page2" class="textColor panelUl">History</a></li>
+                    <li data-icon="false" onclick="changePage('#Pending_list','slide', true);"><a href="#panel-fixed-page2" class="textColor panelUl">On Hold</a></li>
+                    <li data-icon="false" data-direction="reverse" onclick="logout();"><a href="#panel-fixed-page2" class="textColor panelUl">Logout</a></li>
+                </ul>
+                <ul data-role="listview" class="FSE_details_list woborderradius" style="display:none;"></ul>
+                <br>
+                <p class="versioncode"></p>
+            </div>
+            <!--    /panel -->
+        </div>
+        <!--end of Accepted Main Task Page-->
+        <!--Start of Main view page Accepted Task Page-->
+        <div data-role="page" class="bgcolor" id="Accepted_view_tasklist_page">
+            <div data-role="header" class="app_header" data-position="fixed">
+                <h1>In-Progress</h1>
+                <a href="#" onclick="backFromStartTripPage();" class="ui-btn ui-nodisc-icon icon-border ui-alt-icon ui-icon-carat-l ui-btn-icon-notext" data-transition="slide" data-direction="reverse">Back</a>
+            </div>
+            <!-- /header -->
+            <div class="app_body">
+                <div class="app_map" id="Accepted_page_map" ></div>
+                
+                <ul data-role='listview' class="assign" data-inset='true' data-shadow='false' id="View_page_for_Accepted_task" ></ul>
+                
+                <a id="expand_accepted" class="float" >
+                    <img src="img/arrow-up.png" id="fab_icon_accepted" class="float_icons">
+                        </a>
+            </div>
+            <!-- /content -->
+            <div class="app_footer" data-role="footer" data-position="fixed" >
+                <div style="float:left; width: 45%; padding-left: 10px;">
+                    <p id="distances" class="mapText" style="text-decoration: none !important; font-size: 0.8em !important; text-shadow: none !important; font-weight:bold !important; border: none !important;">ETA :</p>
+                </div>
+                <div id="starttripwork" style="display:none; padding-right: 10px;">
+                    
+                    <div class="leftBtn">
+                        <p class="btnFontSize ui-corner-all" onclick="Accepted_start_trip();">START TRIP</p>
+                    </div>
+                    <div class="rightBtn">
+                        <p class="btnFontSize ui-corner-all" onclick="Accepted_start_work_direct();">START WORK</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--end of Main view page  Accepted  Task Page-->
+        <!--Start of Main End-Trip view page Accepted Task Page-->
+        <div data-role="page" class="bgcolor" id="Accepted_End_trip_view_tasklist_page">
+            <div data-role="header" class="app_header" data-position="fixed">
+                <h1>In-Progress</h1>
+                <a href="#Landingpage" class="ui-btn ui-nodisc-icon icon-border ui-alt-icon ui-icon-carat-l ui-btn-icon-notext" data-transition="slide" data-direction="reverse">Back</a>
+            </div>
+            <!-- /header -->
+            
+            <!--Start New Design Changes-->
+            <div class="app_body">
+                <div class="app_map" id="Accepted_End_trip_page_map"></div>
+                
+                <ul data-role='listview' class="assign" data-inset='true' data-shadow='false' id="View_page_End_trip_for_Accepted_task" ></ul>
+                
+                <a id="expand_accepted_end" class="float">
+                    <img src="img/arrow-up.png" id="fab_icon_accepted_end" class="float_icons">
+                        </a>
+            </div>
+            <!-- /content -->
+            <div class="app_footer" data-role="footer" data-position="fixed" >
+                <div style="float:left; width: 45%; padding-left: 10px;">
+                    <p id="distancess" class="mapText" style="text-decoration: none !important; font-size: 0.8em !important; text-shadow: none !important; font-weight:bold !important; border: none !important;">ETA :</p>
+                </div>
+                
+                <div style="padding-right: 10px;">
+                    
+                    <div class="leftBtn">
+                        <p class="btnFontSize ui-corner-all" onclick="changePage('#Accepted_to_pending_task','slide', false);">PAUSE TRIP</p>
+                    </div>
+                    <div class="rightBtn">
+                        <p class="btnFontSize ui-corner-all" onclick="Accepted_end_trip();">END TRIP</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--end of Main End-Trip view page  Accepted  Task Page-->
+        <!--Start of Main Start Work Directly view page Accepted Task Page-->
+        <div data-role="page" class="bgcolor" id="Accepted_Start_work_view_tasklist_page">
+            <div data-role="header" data-position="fixed">
+                <h1>In-Progress</h1>
+                <a href="#" onclick="backNavigation();" class="ui-btn ui-nodisc-icon icon-border ui-alt-icon ui-icon-carat-l ui-btn-icon-notext" data-transition="slide" data-direction="reverse">Back</a>
+            </div>
+            <!-- /header -->
+            <div data-role="main" class="pagemargin">
+                <ul data-role='listview' data-inset='true' data-shadow='false' id="View_page_Direcr_work_for_Accepted_task"></ul>
+                <div style="width:100%">
+                    <div>
+                        <ul data-role="listview" id="categoryListview" data-inset="true" style="box-shadow:none !important;">
+                        </ul>
+                        <hr class='dividers'>
+                        <!--                  Can't Complete This Task?-->
+                        <p class="textColor" style="padding-left:2%;"><b>CAN'T COMPLETE THIS TASK?</b></p>
+                        <ul data-role="listview" data-inset="true" style="box-shadow:none !important;">
+                            <li data-icon="myicon6"><a href="#" id="pending_task_button" class="wborderradius ui-nodisc-icon" onclick="Pending_reason_list();">On hold</a></li>
+                        </ul>
+                        <hr class='dividers'>
+                        <div class="centerbtn">
+                            <a id="cheklistvalue" class="ui-btn btngreycolor ui-corner-all" onclick="Accepted_End_task();">END TASK</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /content -->
+        </div>
+        <!--end of  Main Start Work Directly view page  Accepted  Task Page-->
+        <!--Start of Completed lists  Task Page-->
+        <div data-role="page" class="bgcolor" id="attachmentPage">
+            <div data-role="header" data-position="fixed">
+                <h1>Attach</h1>
+                <a href="#Accepted_Start_work_view_tasklist_page" class="ui-btn ui-nodisc-icon icon-border ui-alt-icon ui-icon-carat-l ui-btn-icon-notext" data-transition="slide" data-direction="reverse">Back</a>
+                <a href="#Accepted_Start_work_view_tasklist_page" class="ui-btn ui-nodisc-icon icon-border ui-alt-icon" data-transition="slide" data-direction="reverse" style="color: rgb(40, 179, 239);">Done</a>
+            </div>
+            <div data-role="main" class="pagemargin">
+                <div class="ui-field-contain attachementcontainer" style="width:100% !important;border: none !important;">
+                    <img id="attachment_file1" class="attachementcontainer_class" />
+                    <img id="attachment_file2" class="attachementcontainer_class" />
+                    <img id="attachment_file3" class="attachementcontainer_class" />
+                    <img id="attachment_file4" class="attachementcontainer_class" />
+                    <img id="attachment_file5" class="attachementcontainer_class" />
+                    <img id="attachment_file6" class="attachementcontainer_class" />
+                    <img id="attachment_file7" class="attachementcontainer_class" />
+                    <img id="attachment_file8" class="attachementcontainer_class" />
+                    <img id="attachment_file9" class="attachementcontainer_class" />
+                    <img id="attachment_file10" class="attachementcontainer_class" />
+                </div>
+            </div>
+        </div>
+        <div data-role="page" class="bgcolor" id="Completed_Maintasklist">
+            <div data-role="header" data-position="fixed">
+                <h1>Resolved</h1>
+                <a href="#nav-panel-Complete" class="ui-btn ui-nodisc-icon icon-border ui-alt-icon ui-icon-burger ui-btn-icon-notext">Menu</a>
+            </div>
+            <!-- /header -->
+            <div data-role="main" class="pagemargin">
+                <ul data-role="listview" data-inset="true" style="box-shadow: none;" id="Completed_task_view_accepted"></ul>
+            </div>
+            <!-- /content -->
+            <div data-role="panel" data-position-fixed="true" class="nav-Drawer" data-display="overlay" id="nav-panel-Complete" data-position="left">
+                <ul data-role="listview" class="wborderradius1">
+                    <!--                <li data-icon="delete"><a href="#" data-rel="close">Close</a></li>-->
+                    <li data-icon="false">
+                        <a href="#" class="woborderradius profile-color" style="height: 110px !important;">
+                            <div class="imageprofile" style="height:80px;width:80px;"></div>
+                        </a>
+                    </li>
+                    <li data-icon="carat-d">
+                        <a href="#" class="woborderradius1 profile-color Fsenamelist ui-nodisc-icon" onclick="FSE_details_list_s();" style="box-shadow:none;border:none;">
+                            <p class="fsename"></p>
+                        </a>
+                    </li>
+                    <li data-icon="false" onclick="changePage('#Landingpage','slide', true);"><a href="#panel-fixed-page2" class="textColor panelUl">Home</a></li>
+                    <li data-icon="false" onclick="changePage('#Accepted_tasks_page','slide', true);"><a href="#panel-fixed-page2" class="textColor panelUl">Task</a></li>
+                    <li data-icon="false" onclick="changePage('#Pending_list','slide', true);"><a href="#panel-fixed-page2" class="textColor panelUl">On Hold</a></li>
+                    <li data-icon="false" data-direction="reverse" onclick="logout();"><a href="#panel-fixed-page2" class="textColor panelUl">Logout</a></li>
+                </ul>
+                <ul data-role="listview" class="FSE_details_list woborderradius" style="display:none;"></ul>
+                <br>
+                <p class="versioncode"></p>
+            </div>
+            <!--    /panel -->
+        </div>
+        <!--End of Completed lists  Task Page-->
+        <!--Start of Completed lists  Task Page-->
+        <!--Start pending task page-->
+        <div data-role="page" class="bodycolor" id="Accepted_to_pending_task">
+            <div data-role="header" data-position="fixed">
+                <h1>On Hold</h1>
+                <!--            Accepted_Start_work_view_tasklist_page-->
+                <a href="#" onclick="backNavigation();" class="ui-btn ui-nodisc-icon icon-border ui-alt-icon ui-icon-carat-l ui-btn-icon-notext" data-transition="slide" data-direction="reverse">Back</a>
+            </div>
+            <!-- /header -->
+            <div data-role="main" class="pagemargin">
+                <div class="ui-field-contain">
+                    <lable for="pending_select_reason" class="labelcolor">
+                        Reason<span class='requriedfield'>*</span></label>
+                        <select nativeMenu="false" id="pending_select_reason">
+                        </select>
+                        <br />
+                        <textarea name="textarea" id="pending_textarea_reason" placeholder="Comment"></textarea>
+                        <span style="font-size:0.7em;">*You need to fill in this form to be able to continue</span>
+                        <br />
+                        <div style="width:100%">
+                            <a class="ui-btn btngreycolor ui-corner-all ui-disabled" onclick="Accepted_to_pending_task_list_reason();">SUBMIT</a>
+                        </div>
+                        </div>
+            </div>
+            <!-- /content -->
+        </div>
+        <div data-role="page" class="bodycolor" id="Accepted_to_pending_task1">
+            <div data-role="header" data-position="fixed">
+                <h1>On Hold</h1>
+                <!--            Accepted_Start_work_view_tasklist_page-->
+                <a href="" data-rel="back" class="ui-btn ui-nodisc-icon icon-border ui-alt-icon ui-icon-carat-l ui-btn-icon-notext" data-transition="slide" data-direction="reverse">Back</a>
+            </div>
+            <!-- /header -->
+            <div data-role="main" class="pagemargin">
+                <div class="ui-field-contain">
+                    <select nativeMenu="false" id="pending_select_reason">
+                    </select>
+                    <br />
+                    <textarea name="textarea" id="pending_textarea_reason" placeholder="Comment"></textarea>
+                    <br />
+                    <div style="width:100%">
+                        <a class="ui-btn btngreycolor btn-color ui-corner-all" onclick="Accepted_to_pending_task_list_reason_confirm_box();">Submit</a>
+                    </div>
+                </div>
+            </div>
+            <!-- /content -->
+        </div>
+        <!--end  pending task-->
+        <!--Start of Rejection task page-->
+        <div data-role="page" class="bodycolor" id="Reject_task_backend">
+            <div data-role="header" data-position="fixed">
+                <h1>Reject Task</h1>
+                <a href="#Assigned_view_tasklist_page"  class="ui-btn ui-nodisc-icon icon-border ui-alt-icon ui-icon-carat-l ui-btn-icon-notext" data-transition="slide" data-direction="reverse">Back</a>
+            </div>
+            <!-- /header -->
+            <div data-role="main" class="pagemargin">
+                <div class="ui-field-contain">
+                    <select nativeMenu="false" id="rejecting_select_reason">
+                    </select>
+                    <textarea name="textarea" id="rejection_textarea_reason" placeholder="Comment"></textarea>
+                    <span style="font-size:0.7em;">*You need to fill in this form to be able to continue</span>
+                    <div style="width:100%">
+                        <a class="ui-btn ui-corner-all btn-color rejectsubmit btngreycolor ui-disabled" onclick="Accepted_to_rejection_task_list_reason_confirm_box();">SUBMIT</a>
+                    </div>
+                </div>
+            </div>
+            <!-- /content -->
+        </div>
+        <!--end Rejection task-->
+        <!--Start pending_task_view_accepted  Main Task Page-->
+        <div data-role="page" class="bgcolor" id="Pending_list">
+            <div data-role="header" data-position="fixed">
+                <h1>On Hold</h1>
+                <a href="#nav-panel-pending" class="ui-btn ui-nodisc-icon icon-border ui-alt-icon ui-icon-burger ui-btn-icon-notext">Menu</a>
+            </div>
+            <!-- /header -->
+            <div data-role="main" class="pagemargin">
+                <ul data-role="listview" data-inset="true" style="box-shadow: none;" id="pending_task_view_accepted"></ul>
+            </div>
+            <!-- /content -->
+            <div data-role="panel" data-position-fixed="true" class="nav-Drawer" data-display="overlay" id="nav-panel-pending" data-position="left">
+                <ul data-role="listview" class="wborderradius1">
+                    <!--                <li data-icon="delete"><a href="#" data-rel="close">Close</a></li>-->
+                    <li data-icon="false">
+                        <a href="#" class="woborderradius profile-color" style="height: 110px !important;">
+                            <div class="imageprofile" style="height:80px;width:80px;"></div>
+                        </a>
+                    </li>
+                    <li data-icon="carat-d">
+                        <a href="#" class="woborderradius1 profile-color Fsenamelist ui-nodisc-icon" onclick="FSE_details_list_s();" style="box-shadow:none;border:none;">
+                            <p class="fsename"></p>
+                        </a>
+                    </li>
+                    <li data-icon="false" onclick="changePage('#Landingpage','slide', true);"><a href="#panel-fixed-page2" class="textColor panelUl">Home</a></li>
+                    <li data-icon="false" onclick="changePage('#Accepted_tasks_page','slide', true);"><a href="#panel-fixed-page2" class="textColor panelUl">Task</a></li>
+                    <li data-icon="false" onclick="changePage('#Completed_Maintasklist','slide', true);"><a href="#panel-fixed-page2" class="textColor panelUl">History</a></li>
+                    <li data-icon="false" data-direction="reverse" onclick="logout();"><a href="#panel-fixed-page2" class="textColor panelUl">Logout</a></li>
+                </ul>
+                <ul data-role="listview" class="FSE_details_list woborderradius" style="display:none;"></ul>
+                <br>
+                <p class="versioncode"></p>
+            </div>
+            <!--    /panel -->
+        </div>
+        <!--end of pending_task_view_accepted Main Task Page-->
+        <!--Start Notificaton page-->
+        <div data-role="page" class="bgcolor" id="notificationpage">
+            <div data-role="header" data-position="fixed">
+                <h1>Notifications</h1>
+                <a href="#nav-panel-five_notification" class="ui-btn ui-nodisc-icon icon-border ui-alt-icon ui-icon-burger ui-btn-icon-notext">Menu</a>
+            </div>
+            <!-- /header -->
+            <div data-role="main" class="pagemargin">
+                <ul data-role='listview' id="Notification_list"></ul>
+            </div>
+            <!-- /content -->
+            <div data-role="panel" data-position-fixed="true" class="nav-Drawer" data-display="overlay" id="nav-panel-five_notification" data-position="left">
+                <ul data-role="listview" class="wborderradius1">
+                    <li data-icon="false">
+                        <a href="#" class="woborderradius profile-color" style="height: 110px !important;">
+                            <div class="imageprofile" style="height:80px;width:80px;"></div>
+                        </a>
+                    </li>
+                    <li data-icon="carat-d">
+                        <a href="#" class="woborderradius1 profile-color Fsenamelist ui-nodisc-icon" onclick="FSE_details_list_s();" style="box-shadow:none;border:none;">
+                            <p class="fsename"></p>
+                        </a>
+                    </li>
+                    <li data-icon="false" onclick="changePage('#Landingpage','slide', true);"><a href="#panel-fixed-page2" class="textColor panelUl">Home</a></li>
+                    <li data-icon="false" onclick="changePage('#Accepted_tasks_page','slide', true);"><a href="#panel-fixed-page2" class="textColor panelUl">Task</a></li>
+                    <li data-icon="false" onclick="changePage('#Completed_Maintasklist','slide', true);"><a href="#panel-fixed-page2" class="textColor panelUl">History</a></li>
+                    <li data-icon="false" onclick="changePage('#Pending_list','slide', true);"><a href="#panel-fixed-page2" class="textColor panelUl">On Hold</a></li>
+                    <li data-icon="false" data-direction="reverse" onclick="logout();"><a href="#panel-fixed-page2" class="textColor panelUl">Logout</a></li>
+                </ul>
+                <ul data-role="listview" class="FSE_details_list woborderradius" style="display:none;"></ul>
+                <br>
+                <p class="versioncode"></p>
+            </div>
+            <!--    /panel -->
+        </div>
+        <!--Completed list page-->
+        <div data-role="page" class="bodycolor" id="complete_view_page">
+            <div data-role="header" data-position="fixed">
+                <h1>Task Detail</h1>
+                <a href="#" onclick="backNavigation();" class="ui-btn ui-nodisc-icon icon-border ui-alt-icon ui-icon-carat-l ui-btn-icon-notext" data-transition="slide" data-direction="reverse">Back</a>
+            </div>
+            <!-- /header -->
+            <div data-role="main" class="">
+                <ul data-role="listview" data-inset="true" style="box-shadow:none !important;" id="complete_listview"></ul>
+            </div>
+            <!-- /content -->
+        </div>
+        <!--    Category Page-->
+        <div data-role="page" class="bodycolor" id="category_view_page">
+            <div data-role="header" data-position="fixed">
+                <h1 class="categoryname">Category Name</h1>
+                <a href="#" onclick="backNavigation();" class="ui-btn ui-nodisc-icon icon-border ui-alt-icon ui-icon-carat-l ui-btn-icon-notext" data-transition="slide" data-direction="reverse">Back</a>
+            </div>
+            <!-- /header -->
+            <div data-role="main" class="pagemargin" id="categoryContent">
+            </div>
+            <!-- /content -->
+        </div>
+        <!--end of Task page-->
+        <div data-role="page" class="bodycolor" id="Update_assets">
+            <div data-role="header" data-position="fixed">
+                <h1>Asset</h1>
+                <a href="#Accepted_Start_work_view_tasklist_page" class="ui-btn ui-nodisc-icon icon-border ui-alt-icon ui-icon-carat-l ui-btn-icon-notext" data-transition="slide" data-direction="reverse">Back</a>
+            </div>
+            <!-- /header -->
+            <div data-role="main" class="">
+                <div class="heading">
+                    ADD ASSET
+                </div>
+                <div class="assets_inputs">
+                    <p>Enter part number</p>
+                    <div class="inner-addon right-addon">
+                        <i class="glyphicon glyphicon-plus activepointer" onclick="Update_assets();"></i>
+                        <input type="text" class="input_type1" id="myInputsss" value="" />
+                    </div>
+                    <ul id="suggestions" data-role="listview" data-inset="true" style="position: absolute;
+                        z-index: 100;
+                        background-color: white;
+                        width: 100%";></ul>
+                    <p>Used</p>
+                    <input type="number" class="input_type1" id="myInput_number" value="0" />
+                    <p>Awaiting</p>
+                    <input type="number" class="input_type1" id="myInput_number_Awaiting" value="0" />
+                    <input type="hidden" class="input_type1" id="description" value="" />
+                </div>
+                <br>
+                <div class="heading">
+                    ASSETS LOADED
+                </div>
+                <div style="width:100%!important;position:center">
+                    <div class="phrase" style="margin-left:-1.5% !important;">
+                        <ul id="Assets_ul" data-role="listview" data-split-icon="delete" data-inset="true" style="box-shadow: none !important;
+                            border-radius:0px !important;">
+                        </ul>
+                        <ul id="Assets_ul_server" data-role="listview"  data-inset="true" style="box-shadow: none !important;
+                            border-radius:0px !important;">
+                        </ul>
+                    </div>
+                    <a id="main_button_upate_asset" style="display:none;" onclick="Update_allassets()" data-mini="true" class="ui-btn ui-corner-all btngreycolor">SUBMIT</a>
+                </div>
+            </div>
+        </div>
+        <!--===============================================================================================================================// -->
+        <!--Start of Main Signature and feedback view page Accepted Task Page-->
+        <div data-role="page" class="bgcolor" id="Accepted_Signature_and_feeback_view_tasklist_page">
+            <div data-role="header" data-position="fixed">
+                <h1 class="">End task</h1>
+                <a href="#"  onclick="siganaturepageNavigation();" class="ui-btn ui-nodisc-icon icon-border ui-alt-icon ui-icon-carat-l ui-btn-icon-notext" data-transition="slide" data-direction="reverse">Back</a>
+            </div>
+            <!--          Accepted_Start_work_view_tasklist_page-->
+            <!-- /header -->
+            <div data-role="main" class="pagemargin">
+                <ul data-role='listview' data-inset='true' data-shadow='false' id="Accepted_Signature_and_feeback_view_task"></ul>
+                <ul data-role='listview' data-inset='true' data-shadow='false' id="offline_Accepted_Signature_and_feeback_view_task"></ul>
+                <div class="" style="background-color: white;
+                    border-radius: 10px;box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);">
+                    <p class="subheading container">End task</p>
+                    <div id="signaturebox" class="container">
+                        <div class="wrapper">
+                            <canvas id="signature-pad" class="signature-pad"></canvas>
+                        </div>
+                        
+                        
+                        <p style="color:#000000;
+                        opacity: .57;
+                        font-weight: bold;
+                        font-size:0.8em;padding:3%;">By signing, you agree that this task has been completed.</p>
+                    </div>
+                    <!--                  <hr class='dividerssignaturebox'>-->
+                    
+                    <div id="rateus" class="container">
+                        <hr class='dividersrateus'>
+                        <p class="subheading">Rate us</p>
+                        <div id="star"></div>
+                    </div>
+                    <!--                 <hr class='dividerscomment'>-->
+                    <div id="addcomment" class="container">
+                        <hr class='dividerscomment'>
+                        <p class="subheading">Add a comment</p>
+                        <textarea id="endtaskcomment" placeholder="Comment"></textarea>
+                    </div>
+                    <div style="width:100%" class="container">
+                        <div class="leftBtn_end">
+                            <a id="sig-submitBtn" onclick="saveSignature();" class="ui-btn btnFontSize ui-corner-all">SUBMIT</a>
+                        </div>
+                        <div class="rightBtn_end">
+                            <a id="sig-clearBtn" onclick="clearCanvas();" class="ui-btn btnFontSize ui-corner-all">CLEAR</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- /content -->
+            <div id="offline_signature_footer" data-role="footer" onclick="Going_online();" data-position="fixed" style="background-color:dimgray !important;height: 8% !important;display:none;">
+                <div style="float:left;margin-left:7% !important;margin-top:4% !important;">
+                    <a id="" class="offline_footer_1">Currently Offline</a>
+                </div>
+                <div style="float:right;margin-right:7% !important;margin-top:4% !important;">
+                    <a id="" class="offline_footer_2">ONLINE</a>
+                </div>
+            </div>
+        </div>
+        
+        <!--end of Main Signature and feedback view page  Accepted  Task Page-->
+        <!--===============================================================================================================================// -->
+        <!--Start Offline landing Task page-->
+        <div data-role="page" class="bgcolor" id="offline_Landingpage">
+            <div data-role="header" data-position="fixed">
+                <h1>WorkWide</h1>
+                <a href="#nav-panel_landing_offline" class="ui-btn ui-nodisc-icon icon-border ui-alt-icon ui-icon-bars ui-btn-icon-notext">Menu</a>
+            </div>
+            <!-- /header -->
+            <div data-role="main" class="pagemargin">
+                <center>
+                    <img src="img/user-image.png" id="offline_imageprofile_one" style="display:none;height:120px;width:120px;border-radius:4px;margin: 10% 0% 10% 0%;;">
+                        <img src="img/user-image.png" id="offline_entityprofile" style="display:none;height:100px;width:220px;border-radius:4px;">
+                            </center>
+                <h4 class="textSize">Task details</h4>
+                <ul data-role="listview" data-inset="true">
+                    <li data-icon="false"><a href="#offline_Accepted_view_page" data-transition="slide" class="textColor" onclick="">Current task in-progress <span id="offline_current" class="ui-li-count">0</span></a></li>
+                </ul>
+                <ul data-role="listview" data-inset="true">
+                    <li data-icon="false"><a href="#Offline_Assigned_tasklist_page" class="textColor" data-transition="slide">Total tasks assigned <span class="ui-li-count" id="offline_Assigned">0</span></a></li>
+                </ul>
+                <ul data-role="listview" data-inset="true">
+                    <li data-icon="false"><a href="#Oflfine_Completed_Maintasklist" class="textColor" data-transition="slide">Total tasks resolved <span class="ui-li-count" id="offline_Completed">0</span></a></li>
+                </ul>
+                <ul data-role="listview" data-inset="true">
+                    <li data-icon="false"><a href="#offline_Accepted_tasks_page" class="textColor" data-transition="slide">Total tasks accepted <span class="ui-li-count" id="offline_Accepted">0</span></a></li>
+                </ul>
+                <ul data-role="listview" data-inset="true">
+                    <li data-icon="false"><a href="#offline_Pending_list" class="textColor" data-transition="slide">Total tasks on hold <span class="ui-li-count" id="offline_Pending">0</span></a></li>
+                </ul>
+                </ul>
+                <br />
+            </div>
+            <div data-role="footer" onclick="Going_online();" data-position="fixed" style="background-color:dimgray !important;height: 8% !important;">
+                <div style="float:left;margin-left:7% !important;margin-top:4% !important;">
+                    <a id="" class="offline_footer_1">Currently Offline</a>
+                </div>
+                <div style="float:right;margin-right:7% !important;margin-top:4% !important;">
+                    <a id="" class="offline_footer_2">ONLINE</a>
+                </div>
+            </div>
+            <!-- /footer -->
+            <div data-role="panel" data-position-fixed="true" class="nav-Drawer" data-display="overlay" id="nav-panel_landing_offline" data-position="left">
+                <ul data-role="listview" class="wborderradius1">
+                    <li data-icon="false">
+                        <a href="#" class="woborderradius profile-color" style="height: 110px !important;">
+                            <div class="imageprofile" style="height:80px;width:80px;"></div>
+                        </a>
+                    </li>
+                    <li data-icon="carat-d">
+                        <a href="#" class="woborderradius1 profile-color Fsenamelist ui-nodisc-icon" onclick="FSE_details_list_s();" style="box-shadow:none;border:none;">
+                            <p class="fsename"></p>
+                        </a>
+                    </li>
+                    <li data-icon="false" onclick="changePage('#offline_Landingpage','slide', true);"><a href="#panel-fixed-page2" class="textColor panelUl">Home</a></li>
+                    <li data-icon="false" onclick="changePage('#','slide', true);"><a href="#panel-fixed-page2" class="textColor panelUl">Task</a></li>
+                    <li data-icon="false" onclick="changePage('#','slide', true);"><a href="#panel-fixed-page2" class="textColor panelUl">History</a></li>
+                    <li data-icon="false" onclick="changePage('#','slide', true);"><a href="#panel-fixed-page2" class="textColor panelUl">On Hold</a></li>
+                    <li data-icon="false" data-direction="reverse" onclick="logout();"><a href="#panel-fixed-page2" class="textColor panelUl">Logout</a></li>
+                </ul>
+                <ul data-role="listview" class="FSE_details_list woborderradius" style="display:none;"></ul>
+                <br>
+                <p class="versioncode"></p>
+                <div style="position:absolute;bottom:0px;width: 100%;margin-left:-17px;border-top:1px solid lightgray;">
+                    <ul data-role="listview">
+                        <li data-icon="myicon5"><a onclick="Going_online();" href="#Landingpage" class="textOffline ui-nodisc-icon" data-transition="slide">Go Online</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!--    /panel -->
+        <!-- /End -->
+        <!--//===============================================================================================================================// -->
+        <!--Start of Offline Assigned Task Page-->
+        <div data-role="page" class="bgcolor" id="Offline_Assigned_tasklist_page">
+            <div data-role="header" data-position="fixed">
+                <h1>Assigned</h1>
+                <a href="#nav-panel-offline_unassigned" class="ui-btn ui-nodisc-icon icon-border ui-alt-icon ui-icon-burger ui-btn-icon-notext">Menu</a>
+            </div>
+            <!-- /header -->
+            <div data-role="main" class="pagemargin">
+                <ul data-role='listview' data-inset='true' data-shadow='false' id="offline_Assigned_page"></ul>
+            </div>
+            <!-- /content -->
+            <div data-role="panel" data-position-fixed="true" class="nav-Drawer" data-display="overlay" id="nav-panel-offline_unassigned" data-position="left">
+                <ul data-role="listview" class="wborderradius1">
+                    <li data-icon="false">
+                        <a href="#" class="woborderradius profile-color" style="height: 110px !important;">
+                            <div class="imageprofile" style="height:80px;width:80px;"></div>
+                        </a>
+                    </li>
+                    <li data-icon="carat-d">
+                        <a href="#" class="woborderradius1 profile-color Fsenamelist ui-nodisc-icon" onclick="FSE_details_list_s();" style="box-shadow:none;border:none;">
+                            <p class="fsename"></p>
+                        </a>
+                    </li>
+                    <li data-icon="false" onclick="changePage('#offline_Landingpage','slide', true);"><a href="#panel-fixed-page2" class="textColor panelUl">Home</a></li>
+                    <li data-icon="false" onclick="changePage('#offline_Accepted_tasks_page','slide', true);"><a href="#panel-fixed-page2" class="textColor panelUl">Task</a></li>
+                    <li data-icon="false" onclick="changePage('#Oflfine_Completed_Maintasklist','slide', true);"><a href="#panel-fixed-page2" class="textColor panelUl">History</a></li>
+                    <li data-icon="false" onclick="changePage('#offline_Pending_list','slide', true);"><a href="#panel-fixed-page2" class="textColor panelUl">On Hold</a></li>
+                    <li data-icon="false" data-direction="reverse" onclick="logout();"><a href="#panel-fixed-page2" class="textColor panelUl">Logout</a></li>
+                </ul>
+                <ul data-role="listview" class="FSE_details_list woborderradius" style="display:none;"></ul>
+                <br>
+                <p class="versioncode"></p>
+            </div>
+            <!--    /panel -->
+            <div data-role="footer" onclick="Going_online();" data-position="fixed" style="background-color:dimgray !important;height: 8% !important;">
+                <div style="float:left;margin-left:7% !important;margin-top:4% !important;">
+                    <a id="" class="offline_footer_1">Currently Offline</a>
+                </div>
+                <div style="float:right;margin-right:7% !important;margin-top:4% !important;">
+                    <a id="" class="offline_footer_2">ONLINE</a>
+                </div>
+            </div>
+            <!-- /footer -->
+        </div>
+        <!--end of Offline Assigned  Task Page-->
+        <!--//===============================================================================================================================// -->
+        <!-- code for offline Assigned view page -->
+        <div data-role="page" class="bgcolor" id="View_page_for_offline_Assigned_task">
+            <div data-role="header" data-position="fixed">
+                <h1>View</h1>
+                <a href="#" onclick="backNavigation();" class="ui-btn ui-nodisc-icon icon-border ui-alt-icon ui-icon-carat-l ui-btn-icon-notext" data-transition="slide" data-direction="reverse">Back</a>
+            </div>
+            <!-- /header -->
+            <div data-role="main" class="pagemargin">
+                <ul data-role='listview' data-inset='true' data-shadow='false' id="View_page_for_offline_Assigned_task_list"></ul>
+                <br/>
+                <div class="map_background">
+                    <ul data-role='listview' data-inset='true' data-shadow='false' style="box-shadow:none" id="offline_task_assigned_items"></ul>
+                    <div id="hide_show_buttonsss_offline" style="display:none;padding-bottom:4%;padding-left: 2%;">
+                        <div class="leftBtn">
+                            <p class="btnFontSize ui-corner-all" onclick="Reject_reason_list_offline();">&nbsp;&nbsp;REJECT</p>
+                        </div>
+                        <div class="rightBtn" style="margin-right: 20px;>
+                            <p class="btnFontSize ui-corner-all" onclick="offline_assign_to_accepted();">ACCEPT</p>
+                            </div>
+                            </div>
+                            </div>
+                            </div>
+                            <!-- /content -->
+                            <div data-role="footer" onclick="Going_online();" data-position="fixed" style="background-color:dimgray !important;height: 8% !important;">
+                            <div style="float:left;margin-left:7% !important;margin-top:4% !important;">
+                            <a id="" class="offline_footer_1">Currently Offline</a>
+                            </div>
+                            <div style="float:right;margin-right:7% !important;margin-top:4% !important;">
+                            <a id="" class="offline_footer_2">ONLINE</a>
+                            </div>
+                            </div>
+                            <!-- /footer -->
+                            </div>
+                            <!--===============================================================================================================================-->
+                            <!--Start of Completed lists  Task Page-->
+                            <div data-role="page" class="bgcolor" id="Oflfine_Completed_Maintasklist">
+                            <div data-role="header" data-position="fixed">
+                            <h1>Resolved</h1>
+                            <a href="#nav-panel-offline_Complete" class="ui-btn ui-nodisc-icon icon-border ui-alt-icon ui-icon-burger ui-btn-icon-notext">Menu</a>
+                            </div>
+                            <!-- /header -->
+                            <div data-role="main" class="pagemargin">
+                            <ul data-role="listview" data-inset="true" style="box-shadow: none;" id="offline_Resolved_page"></ul>
+                            </div>
+                            <!-- /content -->
+                            <div data-role="panel" data-position-fixed="true" class="nav-Drawer" data-display="overlay" id="nav-panel-offline_Complete" data-position="left">
+                            <ul data-role="listview" class="wborderradius1">
+                            <li data-icon="false">
+                            <a href="#" class="woborderradius profile-color" style="height: 110px !important;">
+                            <div class="imageprofile" style="height:80px;width:80px;"></div>
+                            </a>
+                            </li>
+                            <li data-icon="carat-d">
+                            <a href="#" class="woborderradius1 profile-color Fsenamelist ui-nodisc-icon" onclick="FSE_details_list_s();" style="box-shadow:none;border:none;">
+                            <p class="fsename"></p>
+                            </a>
+                            </li>
+                            <li data-icon="false" onclick="changePage('#offline_Landingpage','slide', true);"><a href="#panel-fixed-page2" class="textColor panelUl">Home</a></li>
+                            <li data-icon="false" onclick="changePage('#offline_Accepted_tasks_page','slide', true);"><a href="#panel-fixed-page2" class="textColor panelUl">Task</a></li>
+                            <li data-icon="false" onclick="changePage('#Oflfine_Completed_Maintasklist','slide', true);"><a href="#panel-fixed-page2" class="textColor panelUl">History</a></li>
+                            <li data-icon="false" onclick="changePage('#offline_Pending_list','slide', true);"><a href="#panel-fixed-page2" class="textColor panelUl">On Hold</a></li>
+                            <li data-icon="false" data-direction="reverse" onclick="logout();"><a href="#panel-fixed-page2" class="textColor panelUl">Logout</a></li>
+                            </ul>
+                            <ul data-role="listview" class="FSE_details_list woborderradius" style="display:none;"></ul>
+                            <br>
+                            <p class="versioncode"></p>
+                            </div>
+                            <!--    /panel -->
+                            <div data-role="footer" onclick="Going_online();" data-position="fixed" style="background-color:dimgray !important;height: 8% !important;">
+                            <div style="float:left;margin-left:7% !important;margin-top:4% !important;">
+                            <a id="" class="offline_footer_1">Currently Offline</a>
+                            </div>
+                            <div style="float:right;margin-right:7% !important;margin-top:4% !important;">
+                            <a id="" class="offline_footer_2">ONLINE</a>
+                            </div>
+                            </div>
+                            <!-- /footer -->
+                            </div>
+                            <!--End of Completed lists  Task Page-->
+                            <!--===============================================================================================================================-->
+                            <!--Start  offline Accepted Task Page-->
+                            <div data-role="page" class="bgcolor" id="offline_Accepted_tasks_page">
+                            <div data-role="header" data-position="fixed">
+                            <h1>Accepted</h1>
+                            <a href="#nav-panel-offline_assigned" class="ui-btn ui-nodisc-icon icon-border ui-alt-icon ui-icon-burger ui-btn-icon-notext">Menu</a>
+                            </div>
+                            <!-- /header -->
+                            <div data-role="main" class="pagemargin">
+                            <ul data-role='listview' data-inset='true' data-shadow='false' id="offline_Accepted_page"></ul>
+                            </div>
+                            <!-- /content -->
+                            <div data-role="panel" data-position-fixed="true" class="nav-Drawer" data-display="overlay" id="nav-panel-offline_assigned" data-position="left">
+                            <ul data-role="listview" class="woborderradius2">
+                            <li data-icon="false">
+                            <a href="#" class="woborderradius profile-color" style="height: 110px !important;">
+                            <div class="imageprofile" style="height:80px;width:80px;"></div>
+                            </a>
+                            </li>
+                            <li data-icon="carat-d">
+                            <a href="#" class="woborderradius1 profile-color Fsenamelist ui-nodisc-icon" onclick="FSE_details_list_s();" style="box-shadow:none;border:none;">
+                            <p class="fsename"></p>
+                            </a>
+                            </li>
+                            <li data-icon="false" onclick="changePage('#offline_Landingpage','slide', true);"><a href="#panel-fixed-page2" class="textColor panelUl">Home</a></li>
+                            <li data-icon="false" onclick="changePage('#offline_Accepted_tasks_page','slide', true);"><a href="#panel-fixed-page2" class="textColor panelUl">Task</a></li>
+                            <li data-icon="false" onclick="changePage('#Oflfine_Completed_Maintasklist','slide', true);"><a href="#panel-fixed-page2" class="textColor panelUl">History</a></li>
+                            <li data-icon="false" onclick="changePage('#offline_Pending_list','slide', true);"><a href="#panel-fixed-page2" class="textColor panelUl">On Hold</a></li>
+                            <li data-icon="false" data-direction="reverse" onclick="logout();"><a href="#panel-fixed-page2" class="textColor panelUl">Logout</a></li>
+                            </ul>
+                            <ul data-role="listview" class="FSE_details_list woborderradius" style="display:none;"></ul>
+                            <br>
+                            <p class="versioncode"></p>
+                            </div>
+                            <!--    /panel -->
+                            <div data-role="footer" onclick="Going_online();" data-position="fixed" style="background-color:dimgray !important;height: 8% !important;">
+                            <div style="float:left;margin-left:7% !important;margin-top:4% !important;">
+                            <a id="" class="offline_footer_1">Currently Offline</a>
+                            </div>
+                            <div style="float:right;margin-right:7% !important;margin-top:4% !important;">
+                            <a id="" class="offline_footer_2">ONLINE</a>
+                            </div>
+                            </div>
+                            <!-- /footer -->
+                            </div>
+                            <!--end of offline accepted Main Task Page-->
+                            <!--===============================================================================================================================-->
+                            <!-- code for offline Accepted task view page -->
+                            <div data-role="page" class="bgcolor" id="offline_Accepted_view_page">
+                            <div data-role="header" data-position="fixed">
+                            <h1>In-Progess</h1>
+                            <a href="#" onclick="backNavigation();" class="ui-btn ui-nodisc-icon icon-border ui-alt-icon ui-icon-carat-l ui-btn-icon-notext" data-transition="slide" data-direction="reverse">Back</a>
+                            </div>
+                            <!-- /header -->
+                            <div data-role="main" class="pagemargin">
+                            <ul data-role='listview' data-inset='true' data-shadow='false' id="offline_Accepted_page_list"></ul>
+                            <div class="map_background">
+                            <ul data-role='listview' data-inset='true' data-shadow='false' style="box-shadow:none" id="offline_Accepted_page_items"></ul>
+                            <div style="padding-bottom:4%;padding-left: 2%;">
+                            <div style="padding-bottom:4%;padding-left: 2%;" id="starttripwork_offline" style="display:block;">
+                            <div class="leftBtn">
+                            <p class="btnFontSize ui-corner-all" onclick="startTime();">START TRIP</p>
+                            </div>
+                            <div class="rightBtn" style="margin-right: 20px;">
+                            <p class="btnFontSize" onclick="Going_Accepted_view_to_work_direct_page_direct_to_startwork();">START WORK</p>
+                            </div>
+                            </div>
+                            </div>
+                            </div>
+                            </div>
+                            <!-- /content -->
+                            <div data-role="footer" onclick="Going_online();" data-position="fixed" style="background-color:dimgray !important;height: 8% !important;">
+                            <div style="float:left;margin-left:7% !important;margin-top:4% !important;">
+                            <a id="" class="offline_footer_1">Currently Offline</a>
+                            </div>
+                            <div style="float:right;margin-right:7% !important;margin-top:4% !important;">
+                            <a id="" class="offline_footer_2">ONLINE</a>
+                            </div>
+                            </div>
+                            <!-- /footer -->
+                            </div>
+                            <!--end offline Accepted task view page-->
+                            <!--===============================================================================================================================-->
+                            <!-- code for Start trip offlie miode-->
+                            <div data-role="page" class="bgcolor" id="offline_Accepted_entrip_view_page">
+                            <div data-role="header" data-position="fixed">
+                            <h1>In-Progess</h1>
+                            <a href="#" onclick="backNavigation();" class="ui-btn ui-nodisc-icon icon-border ui-alt-icon ui-icon-carat-l ui-btn-icon-notext" data-transition="slide" data-direction="reverse">Back</a>
+                            </div>
+                            <!-- /header -->
+                            <div data-role="main" class="pagemargin">
+                            <ul data-role='listview' data-inset='true' data-shadow='false' id="offline_Accepted_page_end_list"></ul>
+                            <div class="map_background">
+                            <ul data-role='listview' data-inset='true' data-shadow='false' style="box-shadow:none" id="offline_Accepted_end_page_items"></ul>
+                            <div style="padding-bottom:4%;padding-left: 2%;">
+                            <div class="leftBtn">
+                            <p class="btnFontSize ui-corner-all" onclick="Going_Accepted_view_to_work_direct_page();">END TRIP</p>
+                            </div>
+                            <div class="rightBtn" >
+                            <p class="btnFontSize" onclick="Pending_reason_list_offline();">PAUSE TRIP</p>
+                            </div>
+                            </div>
+                            </div>
+                            </div>
+                            <!-- /content -->
+                            <div data-role="footer" onclick="Going_online();" data-position="fixed" style="background-color:dimgray !important;height: 8% !important;">
+                            <div style="float:left;margin-left:7% !important;margin-top:4% !important;">
+                            <a id="" class="offline_footer_1">Currently Offline</a>
+                            </div>
+                            <div style="float:right;margin-right:7% !important;margin-top:4% !important;">
+                            <a id="" class="offline_footer_2">ONLINE</a>
+                            </div>
+                            </div>
+                            <!-- /footer -->
+                            </div>
+                            <!-- code for Start trip offlie miode-->
+                            <!--===============================================================================================================================-->
+                            <!-- Code for offline start work directly-->
+                            <div data-role="page" class="bgcolor" id="offline_direct_work_start">
+                            <div data-role="header" data-position="fixed">
+                            <h1>In-Progress</h1>
+                            
+                            </div>
+                            <!-- /header -->
+                            <div data-role="main" class="pagemargin">
+                            <ul data-role='listview' data-inset='true' data-shadow='false' id="offline_direct_work_start_list"></ul>
+                            <div style="width:100%">
+                            <div>
+                            <ul data-role="listview" id="offline_categoryListview" data-inset="true" style="box-shadow:none !important;">
+                            </ul>
+                            <hr class='dividers'>
+                            <p class="textColor" style="padding-left:2%;"><b>CAN'T COMPLETE THIS TASK?</b></p>
+                            <ul data-role="listview" data-inset="true" style="box-shadow:none !important;">
+                            <li data-icon="myicon6"><a href="#" id="" class="wborderradius ui-nodisc-icon" onclick="Pending_reason_list_offline();">On hold</a></li>
+                            </ul>
+                            <hr class='dividers'>
+                            <div class="centerbtn">
+                            <a id="" onclick="signature_page_navigation();" class="ui-btn btngreycolor ui-corner-all" onclick="">END TASK</a>
+                            </div>
+                            </div>
+                            </div>
+                            </div>
+                            <!-- /content -->
+                            <div data-role="footer" onclick="Going_online();" data-position="fixed" style="background-color:dimgray !important;height: 8% !important;">
+                            <div style="float:left;margin-left:7% !important;margin-top:4% !important;">
+                            <a id="" class="offline_footer_1">Currently Offline</a>
+                            </div>
+                            <div style="float:right;margin-right:7% !important;margin-top:4% !important;">
+                            <a id="" class="offline_footer_2">ONLINE</a>
+                            </div>
+                            </div>
+                            <!-- /footer -->
+                            </div>
+                            
+                            <!--      Assets-->
+                            
+                            <div data-role="page" class="bodycolor" id="Update_assets_offline">
+                            <div data-role="header" data-position="fixed">
+                            <h1>Asset</h1>
+                            <a href="#" onclick="backNavigation();" class="ui-btn ui-nodisc-icon icon-border ui-alt-icon ui-icon-carat-l ui-btn-icon-notext" data-transition="slide" data-direction="reverse">Back</a>
+                            </div>
+                            <!-- /header -->
+                            <div data-role="main" class="">
+                            <div class="heading">
+                            ADD ASSET
+                            </div>
+                            <div class="assets_inputs">
+                            <p>Enter part number</p>
+                            <div class="inner-addon right-addon">
+                            <i class="glyphicon glyphicon-plus activepointer" onclick="Update_assets_offline();"></i>
+                            <input type="text" class="input_type1" id="myInputsss_offline" value="" />
+                            </div>
+                            <ul id="suggestions_offline" data-role="listview" data-inset="true" style="position: absolute;
+                            z-index: 100;
+                            background-color: white;
+                            width: 100%";></ul>
+                            <p>Used</p>
+                            <input type="number" class="input_type1" id="myInput_number_offline" value="0" />
+                            <p>Awaiting</p>
+                            <input type="number" class="input_type1" id="myInput_number_Awaiting_offline" value="0" />
+                            <input type="hidden" class="input_type1" id="description_offline" value="" />
+                            </div>
+                            <br>
+                            <div class="heading">
+                            ASSETS LOADED
+                            </div>
+                            <div style="width:100%!important;position:center;">
+                            <div class="phrase" style="margin-left:-1.5% !important;">
+                            
+                            <ul id="Assets_ul_offline" data-role="listview" data-split-icon="delete" data-inset="true" style="box-shadow: none !important;
+                            border-radius:0px !important;">
+                            </ul>
+                            <ul id="Assets_ul_server_offline" data-role="listview"  data-inset="true" style="box-shadow: none !important;
+                            border-radius:0px !important;">
+                            </ul>
+                            </div>
+                            <a id="main_button_upate_asset_offline" style="display:none;" onclick="Update_allassets_offline()" data-mini="true" class="ui-btn ui-corner-all btngreycolor">SUBMIT</a>
+                            </div>
+                            </div>
+                            <div data-role="footer" onclick="Going_online();" data-position="fixed" style="background-color:dimgray !important;height: 8% !important;">
+                            <div style="float:left;margin-left:7% !important;margin-top:4% !important;">
+                            <a id="" class="offline_footer_1">Currently Offline</a>
+                            </div>
+                            <div style="float:right;margin-right:7% !important;margin-top:4% !important;">
+                            <a id="" class="offline_footer_2">ONLINE</a>
+                            </div>
+                            </div>
+                            </div>
+                            <!-- End  of Code for offline start work directly-->
+                            <!--===============================================================================================================================-->
+                            <!--  Offline Category Page-->
+                            <div data-role="page" class="bodycolor" id="offline_category_view_page">
+                            <div data-role="header" data-position="fixed">
+                            <h1 class="categoryname">Category Name</h1>
+                            <a href="#" onclick="backNavigation();" class="ui-btn ui-nodisc-icon icon-border ui-alt-icon ui-icon-carat-l ui-btn-icon-notext" data-transition="slide" data-direction="reverse">Back</a>
+                            </div>
+                            <!-- /header -->
+                            <div data-role="main" class="pagemargin" id="_offline_categoryContent">
+                            <!--            <form id="_offline_categoryContent">-->
+                            <!--            </form>-->
+                            </div>
+                            <!-- /content -->
+                            <div data-role="footer" onclick="Going_online();" data-position="fixed" style="background-color:dimgray !important;height: 8% !important;">
+                            <div style="float:left;margin-left:7% !important;margin-top:4% !important;">
+                            <a id="" class="offline_footer_1">Currently Offline</a>
+                            </div>
+                            <div style="float:right;margin-right:7% !important;margin-top:4% !important;">
+                            <a id="" class="offline_footer_2">ONLINE</a>
+                            </div>
+                            </div>
+                            <!-- /footer -->
+                            </div>
+                            <!--  Offline Category Page-->
+                            <!--===============================================================================================================================-->
+                            <!-- Attachement page offline-->
+                            <div data-role="page" class="bgcolor" id="attachmentPage_offline">
+                            <div data-role="header" data-position="fixed">
+                            <h1>Attach</h1>
+                            <a href="#offline_direct_work_start"  class="ui-btn ui-nodisc-icon icon-border ui-alt-icon ui-icon-carat-l ui-btn-icon-notext" data-transition="slide" data-direction="reverse">Back</a>
+                            <a href="#offline_direct_work_start" class="ui-btn ui-nodisc-icon icon-border ui-alt-icon" data-transition="slide" data-direction="reverse" style="color: rgb(40, 179, 239);">Done</a>
+                            </div>
+                            <div data-role="main" class="pagemargin">
+                            <div  class="ui-field-contain attachementcontainer" style="width:100% !important;border: none !important;">
+                            <img id="attachment_file_offline1" class="attachementcontainer_class" />
+                            <img id="attachment_file_offline2" class="attachementcontainer_class" />
+                            <img id="attachment_file_offline3" class="attachementcontainer_class" />
+                            <img id="attachment_file_offline4" class="attachementcontainer_class" />
+                            <img id="attachment_file_offline5" class="attachementcontainer_class" />
+                            <img id="attachment_file_offline6" class="attachementcontainer_class" />
+                            <img id="attachment_file_offline7" class="attachementcontainer_class" />
+                            <img id="attachment_file_offline8" class="attachementcontainer_class" />
+                            <img id="attachment_file_offline9" class="attachementcontainer_class" />
+                            <img id="attachment_file_offline10" class="attachementcontainer_class" />
+                            </div>
+                            </div>
+                            </div>
+                            <!-- Attachement page offline-->
+                            <!--===============================================================================================================================-->
+                            <!-- Code for On-hold reason for offline mode -->
+                            <div data-role="page" class="bodycolor" id="Offline_on_hold_reason_page">
+                            <div data-role="header" data-position="fixed">
+                            <h1>On Hold</h1>
+                            <a href="#" onclick="backNavigation();" class="ui-btn ui-nodisc-icon icon-border ui-alt-icon ui-icon-carat-l ui-btn-icon-notext" data-transition="slide" data-direction="reverse">Back</a>
+                            </div>
+                            <!-- /header -->
+                            <div data-role="main" class="pagemargin">
+                            <div class="ui-field-contain">
+                            <lable for="pending_select_reason_offline" class="labelcolor">
+                            Reason<span class='requriedfield'>*</span></label>
+                            <select nativeMenu="false" id="pending_select_reason_offline">
+                            </select>
+                            <br />
+                            <textarea name="textarea" id="pending_textarea_reason_offline" placeholder="Comment"></textarea>
+                            <span style="font-size:0.7em;">*You need to fill in this form to be able to continue</span>
+                            <br />
+                            <div style="width:100%">
+                            <a class="ui-btn btngreycolor ui-corner-all ui-disabled" onclick="offline_status_change_in_inprogress_to_on_hold();">SUBMIT</a>
+                            </div>
+                            </div>
+                            </div>
+                            <!-- /content -->
+                            <div data-role="footer" onclick="Going_online();" data-position="fixed" style="background-color:dimgray !important;height: 8% !important;">
+                            <div style="float:left;margin-left:7% !important;margin-top:4% !important;">
+                            <a id="" class="offline_footer_1">Currently Offline</a>
+                            </div>
+                            <div style="float:right;margin-right:7% !important;margin-top:4% !important;">
+                            <a id="" class="offline_footer_2">ONLINE</a>
+                            </div>
+                            </div>
+                            <!-- /footer -->
+                            </div>
+                            <!-- End of Code for On-hold reason for offline mode -->
+                            <!--===============================================================================================================================-->
+                            <!--Start offline on hold Task Page-->
+                            <div data-role="page" class="bgcolor" id="offline_Pending_list">
+                            <div data-role="header" data-position="fixed">
+                            <h1>On Hold</h1>
+                            <a href="#nav-panel-offlinepending" class="ui-btn ui-nodisc-icon icon-border ui-alt-icon ui-icon-burger ui-btn-icon-notext">Menu</a>
+                            </div>
+                            <!-- /header -->
+                            <div data-role="main" class="pagemargin">
+                            <ul data-role="listview" data-inset="true" style="box-shadow: none;" id="offline_on_hold_page"></ul>
+                            </div>
+                            <!-- /content -->
+                            <div data-role="panel" data-position-fixed="true" class="nav-Drawer" data-display="overlay" id="nav-panel-offlinepending" data-position="left">
+                            <ul data-role="listview" class="wborderradius1">
+                            <li data-icon="false">
+                            <a href="#" class="woborderradius profile-color" style="height: 110px !important;">
+                            <div class="imageprofile" style="height:80px;width:80px;"></div>
+                            </a>
+                            </li>
+                            <li data-icon="carat-d">
+                            <a href="#" class="woborderradius1 profile-color Fsenamelist ui-nodisc-icon" onclick="FSE_details_list_s();" style="box-shadow:none;border:none;">
+                            <p class="fsename"></p>
+                            </a>
+                            </li>
+                            <li data-icon="false" onclick="changePage('#offline_Landingpage','slide', true);"><a href="#panel-fixed-page2" class="textColor panelUl">Home</a></li>
+                            <li data-icon="false" onclick="changePage('#offline_Accepted_tasks_page','slide', true);"><a href="#panel-fixed-page2" class="textColor panelUl">Task</a></li>
+                            <li data-icon="false" onclick="changePage('#Oflfine_Completed_Maintasklist','slide', true);"><a href="#panel-fixed-page2" class="textColor panelUl">History</a></li>
+                            <li data-icon="false" onclick="changePage('#offline_Pending_list','slide', true);"><a href="#panel-fixed-page2" class="textColor panelUl">On Hold</a></li>
+                            <li data-icon="false" data-direction="reverse" onclick="logout();"><a href="#panel-fixed-page2" class="textColor panelUl">Logout</a></li>
+                            </ul>
+                            <ul data-role="listview" class="FSE_details_list woborderradius" style="display:none;"></ul>
+                            <br>
+                            <p class="versioncode"></p>
+                            </div>
+                            <!--    /panel -->
+                            <div data-role="footer" onclick="Going_online();" data-position="fixed" style="background-color:dimgray !important;height: 8% !important;">
+                            <div style="float:left;margin-left:7% !important;margin-top:4% !important;">
+                            <a id="" class="offline_footer_1">Currently Offline</a>
+                            </div>
+                            <div style="float:right;margin-right:7% !important;margin-top:4% !important;">
+                            <a id="" class="offline_footer_2">ONLINE</a>
+                            </div>
+                            </div>
+                            <!-- /footer -->
+                            </div>
+                            <!--end of offline on hold Task Page-->
+                            <!--===============================================================================================================================-->
+                            <!-- Code for On-Reject reason for offline mode -->
+                            <div data-role="page" class="bodycolor" id="Offline_on_Reject_reason_page">
+                            <div data-role="header" data-position="fixed">
+                            <h1>Reject</h1>
+                            <a href="#" onclick="backNavigation();" class="ui-btn ui-nodisc-icon icon-border ui-alt-icon ui-icon-carat-l ui-btn-icon-notext" data-transition="slide" data-direction="reverse">Back</a>
+                            </div>
+                            <!-- /header -->
+                            <div data-role="main" class="pagemargin">
+                            <div class="ui-field-contain">
+                            <lable for="offline_reject_select_box" class="labelcolor">
+                            Reason<span class='requriedfield'>*</span></label>
+                            <select nativeMenu="false" id="offline_reject_select_box">
+                            </select>
+                            <br />
+                            <textarea name="textarea" id="reject_textarea_reason_offline" placeholder="Comment"></textarea>
+                            <span style="font-size:0.7em;">*You need to fill in this form to be able to continue</span>
+                            <br />
+                            <div style="width:100%">
+                            <a class="ui-btn btngreycolor ui-corner-all ui-disabled" onclick="offline_status_change_in_inprogress_to_on_reject();">SUBMIT</a>
+                            </div>
+                            </div>
+                            </div>
+                            <!-- /content -->
+                            <div data-role="footer" onclick="Going_online();" data-position="fixed" style="background-color:dimgray !important;height: 8% !important;">
+                            <div style="float:left;margin-left:7% !important;margin-top:4% !important;">
+                            <a id="" class="offline_footer_1">Currently Offline</a>
+                            </div>
+                            <div style="float:right;margin-right:7% !important;margin-top:4% !important;">
+                            <a id="" class="offline_footer_2">ONLINE</a>
+                            </div>
+                            </div>
+                            <!-- /footer -->
+                            </div>
+                            <!-- End of Code for On-hold reason for offline mode -->
+                            <!--===============================================================================================================================-->
+                            <!--Completed list page-->
+                            <div data-role="page" class="bodycolor" id="Offline_complete_view_page">
+                            <div data-role="header" data-position="fixed">
+                            <h1>Task Detail</h1>
+                            <a href="#" onclick="backNavigation();" class="ui-btn ui-nodisc-icon icon-border ui-alt-icon ui-icon-carat-l ui-btn-icon-notext" data-transition="slide" data-direction="reverse">Back</a>
+                            </div>
+                            <!-- /header -->
+                            <div data-role="main" class="">
+                            <ul data-role="listview" data-inset="true" style="box-shadow:none !important;" id="offline_complete_listview"></ul>
+                            </div>
+                            <!-- /content -->
+                            </div>
+                            <!-- End of Completed list page-->
+                            <!--===============================================================================================================================-->
+                            <center>
+                            <div id="snackbar">Notification</div>
+                            </center>
+                            <!--===============================================================================================================================-->
+                            <script type="text/javascript" src="cordova.js"></script>
+                            <script type="text/javascript" src="js/index.js"></script>
+                            </body>
+                            </html>
