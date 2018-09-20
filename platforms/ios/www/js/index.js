@@ -79,6 +79,7 @@ var validationFlag2 = false;
 var validationFlag3 = false;
 var validationFlag4 = false;
 var AssetCategory = 0;
+var AttachmentVisible = 0;
 var onholdComment = 0;
 var rejectComment = 0;
 var assets = [];
@@ -792,6 +793,9 @@ function showAlert(alertmessage, title, callBack_func) {
 
 //local server
 var webServiceUrl = "http://192.168.1.145/quintica/Api/";
+
+//test local server
+//var webServiceUrl = "http://192.168.1.114/quintica/Api/";
 
 
 function QuinticaWebService(requestType, methodName, param, callBack) {
@@ -3693,7 +3697,9 @@ function categoryList() {
 				if(AssetCategory == 1 || AssetCategory == "1") {
 					$("#categoryListview").append("<li data-icon='myicon6'><a href='#' onclick=changePage('#Update_assets','slide',false); class='wborderradius ui-nodisc-icon'>Assets</a></li>");
 				}
-				$("#categoryListview").append("<li data-icon='myicon6'><a href='#' onclick=changePage('#attachmentPage','slide',false); class='wborderradius ui-nodisc-icon'>Attachment</a></li>");
+                if (AttachmentVisible == 1 || AttachmentVisible == "1") {
+                       $("#categoryListview").append("<li data-icon='myicon6'><a href='#' onclick=changePage('#attachmentPage','slide',false); class='wborderradius ui-nodisc-icon'>Attachment</a></li>");
+                }
 			}
 			$("#categoryListview").listview("refresh");
 			$.each(obj1, function(key, value) {
@@ -4109,6 +4115,7 @@ function filterReasons() {
 			AssetCategory = response.data.asset_status;
 			onholdComment = response.data.onhold_comment;
 			rejectComment = response.data.reject_comment;
+            AttachmentVisible = response.data.attachment_status;
 		} else {
 			showAlert("Unable to connect..!!", "WorkWide");
 			hideLoadingIcon();
@@ -4242,6 +4249,7 @@ function offline_Workwide_DB() {
             //Code for table creation
             tx.executeSql(res);
             for(var z = 0; z < len; z++) {
+            try{
                 var columns = "(";
                 var values = " VALUES (";
                 var insertQuery = "INSERT INTO Main_Database_Table";
@@ -4294,6 +4302,7 @@ insertQuery = insertQuery.concat(columns);
 insertQuery = insertQuery.concat(values);
 console.log('Insert Query' + insertQuery);
 tx.executeSql(insertQuery);
+}catch(error){}
 }
 changePage("#offline_Landingpage", "slide", false);
 // navigator.notification.alert('Downloading ' + len + ' items.\nPlease be patient', null, 'WorkWide', 'Cancel');
@@ -5021,6 +5030,12 @@ function _taking_Integration_Status(tx, results) {
 	var _o_bje = _obje[0].asset_status;
 	localStorage.setItem("_allow_asset_offline", "");
 	localStorage.setItem("_allow_asset_offline", _o_bje);
+     
+     try{
+     var attachment_status = _obje[0].attachment_status;
+     localStorage.setItem("_allow_attachment_offline", "");
+     localStorage.setItem("_allow_attachment_offline", attachment_status);
+     }catch(error){}
 	tx.executeSql('SELECT * FROM Main_Database_Table WHERE id = ' + localStorage.getItem("offline_Accepted_task_id") + '', [], offline_Accepted_Direct_work_Success, error_Workwide);
 }
 
@@ -5069,7 +5084,9 @@ function offline_Accepted_Direct_work_Success(tx, results) {
 	if(localStorage.getItem("_allow_asset_offline") == "1" || localStorage.getItem("_allow_asset_offline") == 1) {
 		$("#offline_categoryListview").append("<li data-icon='myicon6'><a href='#Update_assets_offline' class='wborderradius ui-nodisc-icon'>Assets</a></li>");
 	}
+    if (localStorage.getItem("_allow_attachment_offline") == "1" || localStorage.getItem("_allow_attachment_offline") == 1) {
 	$("#offline_categoryListview").append("<li data-icon='myicon6'><a href='#attachmentPage_offline' class='wborderradius ui-nodisc-icon'>Attachment</a></li>");
+    }
 	$("#offline_categoryListview").listview("refresh");
 	hideLoadingIcon();
 	if(offlineApiFlag == 0) {
@@ -5119,7 +5136,10 @@ function _category_offline_mode_success_func(tx, results) {
 	$(".categoryname").html(localStorage.getItem("offline_cname"));
 	$(".categoryname").html("");
 	$(".categoryname").html(localStorage.getItem("offline_cname"));
-	var len = results.rows.length;
+    var len=0;
+    try{
+	    len = results.rows.length;
+    }catch(error){}
 	if(len == null || len == "null" || len == "" || len == 0) {
 		hideLoadingIcon()
 	} else {
@@ -5168,6 +5188,7 @@ function _category_offline_mode_success_one_func(tx, results) {
 					var iselect = 0;
 					console.log(JSON.stringify(data_category[j]));
 					for(i = 0; i < len; i++) {
+                      try{
 						console.log(JSON.stringify(arr[i]));
 						arr[i].label = arr[i].label.charAt(0).toUpperCase() + arr[i].label.slice(1);
 						if(arr[i].option_type == "TEXT") {
@@ -5179,11 +5200,15 @@ function _category_offline_mode_success_one_func(tx, results) {
 								var required_status = "<span class='requriedfield'></span>";
 								var requiredClass = "";
 							}
+                        try{
 							if(arr[i].post_values == "") {
 								var post_values = '';
 							} else {
 								var post_values = arr[i].post_values;
 							}
+                         }catch(error){
+                            var post_values = '';
+                         }
 							$("#" + catname).append("<label for='" + arr[i].id + "' class='labelcolor'>" + arr[i].label + required_status + "</label><input type='text' class='input_typec " + requiredClass + "'  maxlength='" + arr[i].type_limit + "'  value='" + post_values + "'  name='" + arr[i].id + "' id='" + arr[i].id + "' />");
 						} else if(arr[i].option_type == "NUMBER") {
 							if(arr[i].required_status == "1" || arr[i].required_status == 1) {
@@ -5194,11 +5219,15 @@ function _category_offline_mode_success_one_func(tx, results) {
 								var required_status = "<span class='requriedfield'></span>";
 								var requiredClass = "";
 							}
+                            try{
 							if(arr[i].post_values == "") {
 								var post_values = '';
 							} else {
 								var post_values = arr[i].post_values;
 							}
+                             }catch(error){
+                             var post_values = '';
+                             }
                             try{
 							$("#" + catname).append("<label for='" + arr[i].id + "' class='labelcolor'>" + arr[i].label + required_status + "</label><input type='number' class='input_typec " + requiredClass + "' oninput='numberLimit(" + arr[i].type_limit + ",\"" + arr[i].id + "\")' value='" + post_values + "' name='" + arr[i].id + "' id='" + arr[i].id + "' />");
                             }catch(error){}
@@ -5211,11 +5240,15 @@ function _category_offline_mode_success_one_func(tx, results) {
 								var required_status = "<span class='requriedfield'></span>";
 								var requiredClass = "";
 							}
+                          try{
 							if(arr[i].post_values == "") {
 								var post_values = '';
 							} else {
 								var post_values = arr[i].post_values;
 							}
+                             }catch(error){
+                             var post_values = '';
+                             }
 							$("#" + catname).append("<label for='" + arr[i].id + "' class='labelcolor'>" + arr[i].label + required_status + "</label><textarea class='form_textarea_reason " + requiredClass + "' id='" + arr[i].id + "'maxlength='" + arr[i].type_limit + "' name='" + arr[i].id + "'>" + post_values + "</textarea>");
 						} else if(arr[i].option_type == "SELECT") {
 							if(arr[i].required_status == "1" || arr[i].required_status == 1) {
@@ -5258,6 +5291,7 @@ function _category_offline_mode_success_one_func(tx, results) {
 							// if (arr[i].post_values == "") {
 							// $("#" + arr[i].id).prop('checked', false);
 							// }
+                            try{
 							$("#" + catname).append("<label class='labelcolor' for='" + arr[i].id + "'>" + arr[i].label + required_status + "</label><select name='" + arr[i].id + "' id='" + arr[i].id + "' data-role='slider'>\
                                                  <option value=''>No</option>\
                                                  <option value='on'>YES</option>\
@@ -5268,6 +5302,9 @@ function _category_offline_mode_success_one_func(tx, results) {
 							if(arr[i].post_values == "NO") {
 								$("#" + arr[i].id).val('');
 							}
+                             }catch(error){
+                             
+                             }
 						} else if(arr[i].option_type == "RADIOLIST" || arr[i].option_type == "RADIO") {
 							if(arr[i].required_status == "1" || arr[i].required_status == 1) {
 								var required_status = "<span class='requriedfield'>*</span>";
@@ -5286,6 +5323,7 @@ function _category_offline_mode_success_one_func(tx, results) {
 							$("#" + arr[i].type_values[0].replace(/ /g, "_")).prop('checked', true);
                         }catch(error){}
 						}
+                    }catch(error){}
 					}
 					$("#" + catname).append("<input type='hidden' name='catid' value='" + localStorage.getItem("offline_cid") + "' /> ");
 					$("#" + catname).append("<br><br><a href='' class='ui-btn btngreycolor ui-corner-all' onclick='categorySumbit_offline_button(" + catname + ");'>SUBMIT</a>");
