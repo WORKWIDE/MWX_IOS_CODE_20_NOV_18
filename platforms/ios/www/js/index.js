@@ -788,11 +788,11 @@ function showAlert(alertmessage, title, callBack_func) {
 
 //var webServiceUrl= "http://172.16.5.151/Qmobility3/Api/";
 //Staging server
-//var webServiceUrl="http://qwork-demo.quintica.com/Api/";
+var webServiceUrl="http://qwork-demo.quintica.com/Api/";
 //var webServiceUrl="http://app.workwidemobile.com/Api/";
 
 //local server
-var webServiceUrl = "http://192.168.1.145/quintica/Api/";
+//var webServiceUrl = "http://192.168.1.145/quintica/Api/";
 
 //test local server
 //var webServiceUrl = "http://192.168.1.114/quintica/Api/";
@@ -1545,6 +1545,10 @@ function Assigned_view_page() {
                                                                         </li>");
 			var watchId = '0';
 			$("#View_page_for_Assigned_task").listview("refresh");
+           try{
+                $("#expand").off("click");
+                $('#fab_icon').attr("src","img/arrow-up.png");
+           }catch(error){}
 			var isExpanded = false;
 			$(function() {
 				var size = 100;
@@ -1909,6 +1913,10 @@ function Accepted_view_page() {
                                                                         </ul>\
                                                                         </li>");
 			$("#View_page_for_Accepted_task").listview("refresh");
+           try{
+               $("#expand_accepted").off("click");
+               $('#fab_icon_accepted').attr("src","img/arrow-up.png");
+           }catch(error){}
 			var isExpanded = false;
 			$(function() {
 				var size = 100;
@@ -2065,6 +2073,10 @@ function Accepted_End_trip_view_page() {
                                                                                  <li><p class='ui-li-aside' style='color:#E2D401'></p>\</li>\</ul>\
                                                                                  </li>");
 			$("#View_page_End_trip_for_Accepted_task").listview("refresh");
+           try{
+               $("#expand_accepted_end").off("click");
+               $('#fab_icon_accepted_end').attr("src","img/arrow-up.png");
+           }catch(error){}
 			var isExpanded = false;
 			$(function() {
 				var size = 100;
@@ -3894,7 +3906,7 @@ function categoryFieldsList(a) {
 							$("#" + response.data[i].type_values[0].replace(/ /g, "_")).prop('checked', true);
 						}
 					}
-					$("#" + catname).append("<br><br><a href='' class='ui-btn btngreycolor ui-corner-all' onclick='categorySumbit(" + catname + ");'>SUBMIT</a>");
+					$("#" + catname).append("<br><br><a href='' class='ui-btn btngreycolor ui-corner-all' onclick='categorySumbit();'>SUBMIT</a>");
 					hideLoadingIcon();
 				}
 				// $(".selectbox").selectmenu().selectmenu('refresh', true);
@@ -4000,7 +4012,7 @@ function Accepted_End_task() {
 	}
 }
 
-function categorySumbit(catname) {
+function categorySumbit() {
 	var z = localStorage.getItem("cname").replace(/ /g, "_") + "reqtext";
 	$("#categoryContent").find("#" + localStorage.getItem("cname").replace(/ /g, "_") + "form").find(".requiredClass").each(function(k, v) {
 		console.log(localStorage.getItem("cname").replace(/ /g, "_") + "form");
@@ -5326,7 +5338,7 @@ function _category_offline_mode_success_one_func(tx, results) {
                     }catch(error){}
 					}
 					$("#" + catname).append("<input type='hidden' name='catid' value='" + localStorage.getItem("offline_cid") + "' /> ");
-					$("#" + catname).append("<br><br><a href='' class='ui-btn btngreycolor ui-corner-all' onclick='categorySumbit_offline_button(" + catname + ");'>SUBMIT</a>");
+					$("#" + catname).append("<br><br><a href='' class='ui-btn btngreycolor ui-corner-all' onclick='categorySumbit_offline_button();'>SUBMIT</a>");
 					hideLoadingIcon()
 				}
 			}
@@ -5339,7 +5351,7 @@ function _category_offline_mode_success_one_func(tx, results) {
 /**code for submitting data into table  */
 var category_list_data = [];
 
-function categorySumbit_offline_button(catname) {
+function categorySumbit_offline_button() {
 	var z = localStorage.getItem("offline_cname").replace(/ /g, "_") + "reqtext";
 	$("#_offline_categoryContent").find("#" + localStorage.getItem("offline_cname").replace(/ /g, "_") + "form").find(".requiredClass").each(function(k, v) {
 		//console.log(localStorage.getItem("offline_cname").replace(/ /g, "_") + "form");
