@@ -834,7 +834,7 @@ canvas#signature-pad.signature-pad{
     position:fixed;
     width:60px;
     height:60px;
-    bottom:13.5%;
+    bottom:15.5%;
     right:10px;
     background-color:#f66;
     color:#FFF;
@@ -899,7 +899,7 @@ canvas#signature-pad.signature-pad{
     position:fixed;
     width:100%;
     overflow-y:auto;
-    bottom:12%;
+    bottom:14%;
 }
 
 .leftBtn{
@@ -918,7 +918,9 @@ canvas#signature-pad.signature-pad{
     width:50%;
 }
 
-
+#Assigned_view_page_reject_button, #Assigned_view_page_accept_button, #start_trip_btn, #start_work_btn, #pause_trip_btn, #end_trip_btn{
+    padding:5px;
+}
 
 
 .app_header{
@@ -927,7 +929,7 @@ canvas#signature-pad.signature-pad{
 
 
 .app_body{
-    height: 82vh;
+    height: 80vh;
     position: relative;
 }
 
@@ -940,7 +942,7 @@ canvas#signature-pad.signature-pad{
 }
 
 .app_footer{
-    height:12vh;
+    height:14vh;
     white-space:nowrap;
     padding-top: 10px;
     padding-bottom: 10px;
@@ -1033,4 +1035,55 @@ canvas#signature-pad.signature-pad{
     
 }
 
+/*Start On Duty*/
+
+.toggle-button {
+    
+    border-radius: 20px;
+    border: 2px solid #D0D0D0;
+    height: 20px;
+    cursor: pointer;
+    width: 50px;
+    position: relative;
+    display: inline-block;
+    user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    -moz-user-select: none;
+}
+.toggle-button span {
+    position: absolute;
+    left: 0;
+    top: 0;
+    border-radius: 100%;
+    width: 26px;
+    height: 26px;
+    background-color: white;
+    float: left;
+    margin: -5px 0 0 -3px;
+    border: 2px solid #D0D0D0;
+    transition: left 0.3s;
+}
+.toggle-button-selected {
+    background-color: #83B152;
+    border: 0px solid #7DA652;
+}
+.toggle-button-selected span {
+    left: 28px;
+    top: -3px;
+    margin: 0px;;
+    border: none;
+    width: 26px;
+    height: 26px;
+    box-shadow: 0 0 0px rgba(0,0,0,0.1);
+}
+
+.toggle_center {
+    margin: 8px 0;
+    text-align:right;
+    width: 75%;
+    display: inline-block;
+}
+
+/*End On Duty*/
 
