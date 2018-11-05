@@ -15,9 +15,7 @@
        <script src="js/signaturepad.js"></script>
       <script src="js/jquery.mobile-1.4.5/jquery.mobile-1.4.5.min.js"></script>
       <script src="js/jquery.raty.js"></script>
-<!--      <link rel="stylesheet" type="text/css" href="css/jquery-ui.css">-->
-<!--          <script src="js/jquery-ui.js"></script>-->
-
+      <script src="js/pulltorefresh.js" type="text/javascript"></script>
       <script src="https://www.gstatic.com/firebasejs/3.9.0/firebase.js"></script>
       <script>
          // Initialize Firebase
@@ -177,6 +175,8 @@
                      <p class="fsename"></p>
                   </a>
                </li>
+               <li data-icon="false"><a href="#panel-fixed-page2" onclick="onDutyCall();" class="textColor panelUl">On duty <div class="toggle_center"><div class="toggle-button toggle-button-selected"><span></span></div></div></a></li>
+               
                <li data-icon="false" onclick="changePage('#Accepted_tasks_page','slide', true);"><a href="#panel-fixed-page2" class="textColor panelUl">Task</a></li>
                <li data-icon="false" onclick="changePage('#Completed_Maintasklist','slide', true);"><a href="#panel-fixed-page2" class="textColor panelUl">History</a></li>
                <li data-icon="false" onclick="changePage('#Pending_list','slide', true);"><a href="#panel-fixed-page2" class="textColor panelUl">On Hold</a></li>
@@ -255,7 +255,7 @@
              <div style="float:left; width: 100%; padding-left: 10px;">
                  <p id="distance" class="mapText" style="text-decoration: none !important; font-size: 0.8em !important; text-shadow: none !important; font-weight:bold !important; border: none !important;">ETA :</p>
              </div>
-             <div id="hide_show_buttonsss" style="display:none; padding-right: 10px; padding-left: 40%;">
+             <div id="hide_show_buttonsss" style="display:none; padding-right: 10px; padding-left: 35%;">
                  
                  <div class="leftBtn">
                      <p id="Assigned_view_page_reject_button" class="btnFontSize ui-corner-all" onclick="Confirm_To_Accept_Task();">ACCEPT</p>
@@ -326,13 +326,13 @@
              <div style="float:left; width: 100%; padding-left: 10px;">
                  <p id="distances" class="mapText" style="text-decoration: none !important; font-size: 0.8em !important; text-shadow: none !important; font-weight:bold !important; border: none !important;">ETA :</p>
              </div>
-             <div id="starttripwork" style="display:none; padding-right: 10px; padding-left: 40%;">
+             <div id="starttripwork" style="display:none; padding-right: 10px; padding-left: 35%;">
                  
                  <div class="leftBtn">
-                     <p class="btnFontSize ui-corner-all" onclick="Accepted_start_trip();">START TRIP</p>
+                     <p id="start_trip_btn" class="btnFontSize ui-corner-all" onclick="Accepted_start_trip();">START TRIP</p>
                  </div>
                  <div class="rightBtn">
-                     <p class="btnFontSize ui-corner-all" onclick="Accepted_start_work_direct();">START WORK</p>
+                     <p id="start_work_btn" class="btnFontSize ui-corner-all" onclick="Accepted_start_work_direct();">START WORK</p>
                  </div>
              </div>
          </div>
@@ -362,13 +362,13 @@
         <p id="distancess" class="mapText" style="text-decoration: none !important; font-size: 0.8em !important; text-shadow: none !important; font-weight:bold !important; border: none !important;">ETA :</p>
     </div>
     
-    <div style="padding-right: 10px; padding-left: 40%;">
+    <div style="padding-right: 10px; padding-left: 35%;">
         
         <div class="leftBtn">
-            <p class="btnFontSize ui-corner-all" onclick="changePage('#Accepted_to_pending_task','slide', false);">PAUSE TRIP</p>
+            <p id="pause_trip_btn" class="btnFontSize ui-corner-all" onclick="changePage('#Accepted_to_pending_task','slide', false);">PAUSE TRIP</p>
         </div>
         <div class="rightBtn">
-            <p class="btnFontSize ui-corner-all" onclick="Accepted_end_trip();">END TRIP</p>
+            <p id="end_trip_btn" class="btnFontSize ui-corner-all" onclick="Accepted_end_trip();">END TRIP</p>
         </div>
     </div>
 </div>
@@ -808,7 +808,7 @@
             </center>
             <h4 class="textSize">Task details</h4>
             <ul data-role="listview" data-inset="true">
-               <li data-icon="false"><a href="#offline_Accepted_view_page" data-transition="slide" class="textColor" onclick="">Current task in-progress <span id="offline_current" class="ui-li-count">0</span></a></li>
+               <li data-icon="false"><a href="#" onclick="offline_Accepted_view_page();" data-transition="slide" class="textColor" onclick="">Current task in-progress <span id="offline_current" class="ui-li-count">0</span></a></li>
             </ul>
             <ul data-role="listview" data-inset="true">
                <li data-icon="false"><a href="#Offline_Assigned_tasklist_page" class="textColor" data-transition="slide">Total tasks assigned <span class="ui-li-count" id="offline_Assigned">0</span></a></li>

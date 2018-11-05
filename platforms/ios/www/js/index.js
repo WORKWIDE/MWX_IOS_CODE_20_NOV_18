@@ -18,6 +18,10 @@ var isCallOnlineLandingPage=false;
 var isEditOfflineData=false;
 var loopval=0;
 var imgEntries=null;
+var logoBase64=null;
+var isLogoDownload=false;
+var refresher=null;
+var changeDutyCalledFrom=0;
 var app = {
 	initialize: function() {
 		this.bindEvents();
@@ -66,7 +70,6 @@ var monthNames = ["January", "February", "March", "April", "May", "June", "July"
 //----------------------------------------------
 var inAccepted = 0;
 var f = -1;
-var inProgressflag = 0;
 var inProgressset = 0;
 var geokm = "";
 var rating = 0;
@@ -426,7 +429,7 @@ $(document).on("pageshow", function(event, data) {
 	var activePage = $.mobile.pageContainer.pagecontainer("getActivePage");
 	$(".pagemargin").removeClass("addOpacity");
 	$(".versioncode").html("");
-	$(".versioncode").html("Version 2.0");
+	$(".versioncode").html("Version 2.4");
 	localStorage.setItem("previous_page_id", "");
 	localStorage.setItem("previous_page_id", data.prevPage.attr('id'));
 	//var activePage = $.mobile.pageContainer.pagecontainer("getActivePage");
@@ -447,10 +450,25 @@ $(document).on("pageshow", function(event, data) {
 			$(".fsename").html(localStorage.getItem("name"));
 			$(".profile_fsename").html(localStorage.getItem("name"));
 			var img = document.getElementById("imageprofile_one");
-			img.src = "";
-			img.src = webServiceUrl + "entityLogo/entityid/" + localStorage.getItem("entityid");
-			entityurl = webServiceUrl + "entityLogo/entityid/" + localStorage.getItem("entityid");
-			profilePicture(entityurl, 1);
+            try{
+               img.src = "";
+               entityurl = webServiceUrl + "entityLogo/entityid/" + localStorage.getItem("entityid");
+               try{
+                if(logoBase64==null){
+                    img.src=entityurl;
+                }else{
+                    img.src = logoBase64;
+                }
+               
+               }catch(error){}
+               
+               if(!isLogoDownload)
+                    profilePicture(entityurl, 1);
+
+			
+               }catch(error){
+                    img.src = cordova.file.applicationStorageDirectory + "Documents/" + "entity.png";
+               }
 			inProgress();
 			listcounts();
 			current_position();
@@ -459,14 +477,28 @@ $(document).on("pageshow", function(event, data) {
 			localStorage.setItem("Notification_value_to_View_page", "");
             isOfflineAppWorking=false;
             try{
+               setTimeout(function() {
              if(updateMapInterval==null){
                updateMapInterval = setInterval(function(){ get_current_position(); }, 60000*2);
                get_current_position();
              }
+            }, 20000);
+               }catch(error){}
+               
+               try{
+               
+                    if(localStorage.getItem("OnDuty")=="0"){
+               
+                        $('.toggle-button').removeClass('toggle-button-selected');
+                    }else if(localStorage.getItem("OnDuty")=="1"){
+               
+                        $('.toggle-button').addClass('toggle-button-selected');
+                    }
                }catch(error){}
 			break;
 		case 'Assigned_tasklist_page':
-			ApploadingIcon();
+            pullToRefreshList("task_view_accepted");
+            ApploadingIcon();
 			$(".btnFontSize").css('color', localStorage.getItem("s_colorcode") + " !important");
 			ClearFields();
 			request_json = "";
@@ -483,13 +515,20 @@ $(document).on("pageshow", function(event, data) {
 			Assigned_view_page();
 			break;
 		case 'Accepted_tasks_page':
-			ApploadingIcon();
+			pullToRefreshList("Accepted_Tasks_list");
+            ApploadingIcon();
 			ClearFields();
 			$(".btnFontSize").css('color', localStorage.getItem("s_colorcode"));
 			Accepted_Tasks_Page();
 			break;
 		case 'Accepted_view_tasklist_page':
-			$("#starttripwork").css("display", "block");
+               if (inProgressset == 0 || startclick == 1) {
+               
+                $("#starttripwork").css("display", "block");
+               
+               } else {
+                $("#starttripwork").css("display", "none");
+               }
 			$(".btnFontSize").css('color', localStorage.getItem("s_colorcode"));
 			Accepted_view_page();
 			break;
@@ -521,19 +560,25 @@ $(document).on("pageshow", function(event, data) {
 				$("#Accepted_Signature_and_feeback_view_task").css("display", "block");
 				$("#offline_signature_footer").css("display", "none");
 				Accepted_Signture_and_feedback_view_page();
+
 			}
+            rating = 0;
 			$('#star').raty({
 				click: function(score, evt) {
 					rating = score;
 				}
 			});
+               localStorage.setItem("resume_option", "3");
+
 			break;
 		case 'Completed_Maintasklist':
-			ApploadingIcon();
+            pullToRefreshList("Completed_task_view_accepted")
+            ApploadingIcon();
 			Completed_task_list();
 			break;
 		case 'Pending_list':
-			ApploadingIcon();
+            pullToRefreshList("pending_task_view_accepted");
+            ApploadingIcon();
 			pending_task_list();
 			break;
 		case 'pending_view_tasklist_page':
@@ -571,6 +616,7 @@ $(document).on("pageshow", function(event, data) {
 			rejectReasons();
 			break;
 		case 'category_view_page':
+             ApploadingIcon();
 			categoryFieldsList(1);
 			break;
 		case 'Update_assets':
@@ -578,6 +624,8 @@ $(document).on("pageshow", function(event, data) {
 			break;
 		case 'offline_Landingpage':
 			startclick = 0;
+               inAccepted=0;
+               inProgressset=0;
 			$("#offline_imageprofile_one").css("display", "block");
 			$(".fsename").html(localStorage.getItem("name"));
 			$(".profile_fsename").html(localStorage.getItem("name"));
@@ -619,13 +667,14 @@ $(document).on("pageshow", function(event, data) {
 			offline_on_hold_page();
 			break;
 		case 'offline_Accepted_view_page':
-			startclick = 1;
+            localStorage.setItem("resume_option", "1");
 			$(".btnFontSize").css('color', localStorage.getItem("s_colorcode"));
 			offline_Accepted_View_pages();
 			break;
 		case 'offline_direct_work_start':
 			$(".btnFontSize").css('color', localStorage.getItem("s_colorcode"));
 			offline_Accepted_Direct_work_pages();
+            localStorage.setItem("resume_option", "2");
 			break;
 		case 'Offline_on_hold_reason_page':
 			on_hold_offline_reason();
@@ -643,6 +692,7 @@ $(document).on("pageshow", function(event, data) {
 		case 'offline_Accepted_entrip_view_page':
 			$(".btnFontSize").css('color', localStorage.getItem("s_colorcode"));
 			offline_Accepted_endtrip_View_pages();
+            localStorage.setItem("resume_option", "5");
 			break;
 		case 'Update_assets_offline':
 			_Offline_Assets_taking_value_from_Array();
@@ -788,11 +838,11 @@ function showAlert(alertmessage, title, callBack_func) {
 
 //var webServiceUrl= "http://172.16.5.151/Qmobility3/Api/";
 //Staging server
-var webServiceUrl="http://qwork-demo.quintica.com/Api/";
+//var webServiceUrl="http://qwork-demo.quintica.com/Api/";
 //var webServiceUrl="http://app.workwidemobile.com/Api/";
 
 //local server
-//var webServiceUrl = "http://192.168.1.145/quintica/Api/";
+var webServiceUrl = "http://192.168.1.145/quintica/Api/";
 
 //test local server
 //var webServiceUrl = "http://192.168.1.114/quintica/Api/";
@@ -809,26 +859,31 @@ function QuinticaWebService(requestType, methodName, param, callBack) {
 			ApploadingIcon();
 		}
 		if(checkConnection()) {
-			$.ajax({
-				type: "" + requestType + "",
-				url: webServiceUrl + methodName,
-				data: param,
-				async: false,
-				success: function(message) {
-                   
-					console.log('QuinticaWebService Response :'+ JSON.stringify(message));
-					callBack(message);
-				},
-				error: function(xhr) {
-					console.log(xhr.statusText);
-					if(xhr.statusText == "Error: TimeoutError: DOM Exception 23") {
-						showAlert("Please try again.", "Timeout Error!");
-					}
-					console.log("error message" + JSON.stringify(xhr));
-                    
-					hideLoadingIcon();
-				}
-			});
+
+                  $.ajax({
+                         type: "" + requestType + "",
+                         url: webServiceUrl + methodName,
+                         timeout:60000*2,
+                         data: param,
+                        
+
+                         }).done(function(message){
+                                 console.log('QuinticaWebService Response :'+ JSON.stringify(message));
+                                 callBack(message);
+                                 }).fail(function(jqXHR, textStatus){
+                                     if(textStatus == 'timeout')
+                                     {
+                                        console.log(textStatus+"error message" + JSON.stringify(jqXHR));
+                                    
+                                         }else{
+                                            console.log(textStatus+"error message" + JSON.stringify(jqXHR));
+                                         }
+                                        hideLoadingIcon();
+
+                                     });
+
+                  
+                  
 		} else {
 			showAlert("No internet connection.", "WorkWide");
 			hideLoadingIcon();
@@ -837,7 +892,7 @@ function QuinticaWebService(requestType, methodName, param, callBack) {
     
     
     
-	// hideLoadingIcon();
+	
 }
 
 
@@ -848,28 +903,34 @@ function QuinticaWebServiceForBackgroundCall(requestType, methodName, param, cal
     errorHandling(function() {
                
                   if(checkConnection()) {
+                  
                   $.ajax({
                          type: "" + requestType + "",
                          url: webServiceUrl + methodName,
+                         timeout:60000,
                          data: param,
-                         async: false,
-                         success: function(message) {
-                        
-                         console.log('QuinticaWebService Url :'+ JSON.stringify(message));
-                         callBack(message);
-                         },
-                         error: function(xhr) {
-                         console.log(xhr.statusText);
-                         if(xhr.statusText == "Error: TimeoutError: DOM Exception 23") {
-                         showAlert("Please try again.", "Timeout Error!");
-                         }
-                         console.log("message" + JSON.stringify(xhr));
-                         hideLoadingIcon();
-                         }
-                         });
+                         
+                         
+                         }).done(function(message){
+                                 console.log('QuinticaWebService Response :'+ JSON.stringify(message));
+                                 callBack(message);
+                                 }).fail(function(jqXHR, textStatus){
+                                         if(textStatus == 'timeout')
+                                         {
+                                            console.log(textStatus+"error message" + JSON.stringify(jqXHR));
+                                         
+                                         }else{
+                                            console.log(textStatus+"error message" + JSON.stringify(jqXHR));
+                                         }
+                                        
+                                         
+                                         });
+                  
+                  
+                  
                   } else {
-                  showAlert("No internet connection.", "WorkWide");
-                  hideLoadingIcon();
+                  console.log("No internet connection.", "WorkWide");
+                  
                   }
                   });
     
@@ -989,7 +1050,8 @@ function pushs_read_unread() {
 /*Start of Login Functionality*/
 //-------------------------------------------------
 function loginIn() {
-	
+    logoBase64=null;
+    isLogoDownload=false;
 	if(($("#userName").val() == '') && ($("#password").val() == '')) showAlert("Please Enter Username And Password", "WorkWide");
 	else if($("#userName").val() == '') showAlert("Please Enter Username", "WorkWide");
 	else if($("#password").val() == '') showAlert("Please Enter Password", "WorkWide");
@@ -999,7 +1061,7 @@ function loginIn() {
 			"password": "" + $("#password").val().trim() + "",
 			device_id: localStorage.getItem("DevieToken"),
 			device_OS: device.platform,
-			versioncode: "2.0"
+			versioncode: "2.4"
 		};
         ApploadingIcon();
 		QuinticaWebService("POST", "login", parameters, function(response) {
@@ -1031,11 +1093,22 @@ function loginIn() {
 				localStorage.setItem("entityname", response.TOKEN.ent_name);
 				localStorage.setItem("colorcode", response.TOKEN.colorCode);
 				localStorage.setItem("s_colorcode", response.TOKEN.secondary_color);
+                localStorage.setItem("OnDuty",response.TOKEN.duty_mode);
+                           
+        
 				if(checkConnection()) {
+                   try{
+                        getImageFromServer(webServiceUrl + "entityLogo/entityid/" + response.TOKEN.entityid, function(myBase64) {
+                                      logoBase64=myBase64;
+                        });
+                   }catch(error){}
 					$(".imageprofile").css("background-image", "url(" + webServiceUrl + "fseProfileImage/TOKEN/" + response.TOKEN.TOKEN + "/userid/" + response.TOKEN.user_id + "" + ")");
 					profileserverUrl = webServiceUrl + "fseProfileImage/TOKEN/" + response.TOKEN.TOKEN + "/userid/" + response.TOKEN.user_id;
 					profilePicture(profileserverUrl, 0);
 				}
+            try{
+                           
+               setTimeout(function() {
                if(updateMapInterval!=null){
                     clearInterval(updateMapInterval);
                     updateMapInterval=null;
@@ -1044,6 +1117,8 @@ function loginIn() {
                     updateMapInterval = setInterval(function(){ get_current_position(); }, 60000*2);
                     get_current_position();
                }
+             }, 20000);
+            }catch(error){}
 				ApploadingIcon();
 				acceptPageFromLandingPage = false;
 				changePage("#Landingpage", "slide", false);
@@ -1284,12 +1359,15 @@ function inProgress() {
 	};
 	QuinticaWebService("GET", "inprogessTaskId", parameters, function(response) {
 		if(response.code == "1") {
-			if((response.TaskId !== 0 || response.TaskId !== "0") && (localStorage.getItem("resume_option") == "" || localStorage.getItem("resume_option") == null)) {
-				localStorage.setItem("Accepted_Task_id", response.TaskId);
-				localStorage.setItem("resume_option", 1);
-			} else {
-				localStorage.setItem("Accepted_Task_id", response.TaskId);
-			}
+           localStorage.setItem("Accepted_Task_id", response.TaskId[0].id);
+           
+           if (response.TaskId[0].resume_option == "" || response.TaskId[0].resume_option == null) {
+           
+           localStorage.setItem("resume_option", 1);
+           } else {
+           
+           localStorage.setItem("resume_option", response.TaskId[0].resume_option);
+           }
 		} else {
 			showAlert("Unable to connect..!!", "WorkWide");
 			hideLoadingIcon();
@@ -1298,9 +1376,9 @@ function inProgress() {
 }
 
 function listcounts() {
-	if(isOfflineAppWorking) {
-		localStorage.setItem("resume_option", "");
-	}
+//    if(isOfflineAppWorking) {
+//        localStorage.setItem("resume_option", "");
+//    }
 	var parameters = {
 		TOKEN: localStorage.getItem("TOKEN"),
 		userid: localStorage.getItem("user_id")
@@ -1320,19 +1398,19 @@ function listcounts() {
 			document.getElementById("Completed").innerHTML = response.data[3].total;
 			document.getElementById("Pending").innerHTML = "";
 			document.getElementById("Pending").innerHTML = response.data[1].total;
-			if(response.data[4].total == "1" || response.data[4].total == 1) {
+    
+               inProgressset=0;
+               inAccepted=0;
+            if(response.data[4].total == "1" || response.data[4].total > 0) {
 				document.getElementById("current").innerHTML = "";
 				document.getElementById("current").innerHTML = response.data[4].total;
-				$("#hide_show_buttonsss").css("display", "none");
-				inProgressflag = 0;
+
 				inProgressset = 1;
-			} else if(response.data[2].total == "1" || response.data[2].total > 0) {
-				//alert("testt");
+			}
+            if(response.data[2].total == "1" || response.data[2].total > 0) {
+
 				inAccepted = 1;
-				$("#hide_show_buttonsss").css("display", "none");
-			} else {
-				$("#hide_show_buttonsss").css("display", "block");
-				inProgressflag = 1;
+				
 			}
 			document.getElementById("Pending").innerHTML = response.data[1].total;
 			localStorage.setItem("Assigned_button_id", response.data[4].total);
@@ -1367,14 +1445,17 @@ function backFromStartTripPage() {
 }
 //==================================================
 function start_click() {
+    if(localStorage.getItem("OnDuty")=="0"){
+        changeDutyCalledFrom=5;
+        askToUserCurrentDutyStatus();
+    }else{
 	acceptPageFromLandingPage = true;
 	ApploadingIcon();
 	startclick = 1;
-	if(inProgressflag == 1) {
-		changePage("#Landingpage", "slide", false);
+	if(inProgressset == 0) {
 		acceptPageFromLandingPage = false;
-	} else if(localStorage.getItem("resume_option") == "" || localStorage.getItem("resume_option") == null) {
-		changePage("#Accepted_tasks_page", "slide", false);
+        hideLoadingIcon();
+        startclick = 0;
 	} else if(localStorage.getItem("resume_option") == 1) {
 		changePage("#Accepted_view_tasklist_page", "slide", false);
 	} else if(localStorage.getItem("resume_option") == 2) {
@@ -1387,7 +1468,8 @@ function start_click() {
 	} else if(localStorage.getItem("resume_option") == 5) {
 		changePage("#Accepted_End_trip_view_tasklist_page", "slide", false);
 	}
-	hideLoadingIcon();
+        hideLoadingIcon();
+    }
 }
 //-------------------------------------------------
 /*End of Total Count of List  Functionality*/
@@ -1401,9 +1483,12 @@ function Assigned_task_list() {
 		userid: localStorage.getItem("user_id"),
 		statusType: localStorage.getItem("Assigned")
 	};
-	ApploadingIcon();
+	
 	QuinticaWebService("GET", "task_list", parameters, function(response) {
-		if(response.code == "1") {
+       try{
+           refresher.destroyProgress();
+       }catch(error){}
+        if(response.code == "1") {
 			if(Object.keys(response.data).length == 0) {
 				showAlert("No Task ..!!", "WorkWide");
 			}
@@ -1493,16 +1578,15 @@ function Assigned_view(taskid, num) {
 	localStorage.setItem("Assigned_Task_id", "");
 	localStorage.setItem("Assigned_Task_id", taskid);
 	localStorage.setItem("num", num);
-	//    localStorage.getItem("Assigned_button_id") == 0
-	console.log("Assigned_view" + localStorage.getItem("num") + "Accepted" + inAccepted + "inset" + inProgressset + "" + inAcceptedmultiple);
+    if(localStorage.getItem("num") == 0 && inAcceptedmultiple == 1) {
+        $("#hide_show_buttonsss").css("display", "block");
+    }else{
 	if(localStorage.getItem("num") == 0 && inAccepted == 0 && inProgressset == 0) {
 		$("#hide_show_buttonsss").css("display", "block");
 	} else {
 		$("#hide_show_buttonsss").css("display", "none");
 	}
-	if(inAcceptedmultiple == 1) {
-		$("#hide_show_buttonsss").css("display", "block");
-	}
+}
 	changePage("#Assigned_view_tasklist_page", "slide", false);
 }
 //-------------------------------------------------
@@ -1552,9 +1636,9 @@ function Assigned_view_page() {
 			var isExpanded = false;
 			$(function() {
 				var size = 100;
-				var sizeAfterExpand = $('#View_page_for_Assigned_task').height() + 35;
+				var sizeAfterExpand = $('#View_page_for_Assigned_task').height() + 48;
 				$('#View_page_for_Assigned_task ul').hide(0).parent();
-				var sizeBeforeExpand = $('#View_page_for_Assigned_task').height() + 35;
+				var sizeBeforeExpand = $('#View_page_for_Assigned_task').height() + 48;
 				$('#expand').css("bottom", sizeBeforeExpand);
 				$('#expand').on('click', function(e) {
 					e.stopPropagation();
@@ -1722,15 +1806,20 @@ function Get_time_distance(taskIDs) {
 /*Start of Assigned To Accepted task  Functionality*/
 //-------------------------------------------------
 function Confirm_To_Accept_Task() {
-	//ApploadingIcon();
-	navigator.notification.confirm("Are you sure you want to accept this task?", Confirm_To_Accept_Task_Button, "WorkWide", ["Yes", "No"]);
+    if(localStorage.getItem("OnDuty")=="0"){
+        changeDutyCalledFrom=1;
+        askToUserCurrentDutyStatus();
+    }else{
+        navigator.notification.confirm("Are you sure you want to accept this task?", Confirm_To_Accept_Task_Button, "WorkWide", ["Yes", "No"]);
+    }
 }
 
 function Confirm_To_Accept_Task_Button(buttonIndex) {
 	if(buttonIndex == 1) {
 		var statusId = 3;
 		if(inAcceptedmultiple == 0) {
-			statusId = 5;
+            startclick = 1;
+            statusId = 5;
 			localStorage.setItem("Accepted_Task_id", "");
 			localStorage.setItem("Accepted_Task_id", localStorage.getItem("Assigned_Task_id"));
 		}
@@ -1743,7 +1832,8 @@ function Confirm_To_Accept_Task_Button(buttonIndex) {
 		QuinticaWebService("GET", "updatetaskStatus", parameters, function(response) {
 			if(response.code == "1") {
 				if(inAcceptedmultiple == 1) {
-					changePage("#Accepted_tasks_page", "slide", false);
+                    inAccepted=1;
+                    changePage("#Accepted_tasks_page", "slide", false);
 				} else {
 					inProgressset = 1;
 					changePage("#Accepted_view_tasklist_page", "slide", false);
@@ -1771,9 +1861,12 @@ function Accepted_Tasks_Page() {
 		statusType: localStorage.getItem("Accepted"),
 		fromdashboard: "1"
 	};
-	ApploadingIcon();
+	
 	QuinticaWebService("GET", "task_list", parameters, function(response) {
-		if(response.code == "1") {
+       try{
+        refresher.destroyProgress();
+       }catch(error){}
+        if(response.code == "1") {
 			if(Object.keys(response.data).length == 0) {
 				showAlert("No Task ..!!", "WorkWide");
 				$("#Accepted_Tasks_list").empty();
@@ -1847,21 +1940,6 @@ function Accepted_view(taskid) {
 	if(inProgressset == 0 || startclick == 1) {
 		startclick = 0;
 		$("#starttripwork").css("display", "block");
-		var parameters = {
-			TOKEN: localStorage.getItem("TOKEN"),
-			taskid: localStorage.getItem("Accepted_Task_id"),
-			statusid: 5
-		};
-		ApploadingIcon();
-		QuinticaWebService("GET", "updatetaskStatus", parameters, function(response) {
-			if(response.code == "1") {
-				inProgressset = 1;
-				changePage("#Accepted_view_tasklist_page", "slide", false);
-			} else {
-				showAlert("Please try again..!!", "WorkWide");
-				hideLoadingIcon()
-			}
-		});
 	} else {
 		$("#starttripwork").css("display", "none");
 	}
@@ -1920,9 +1998,9 @@ function Accepted_view_page() {
 			var isExpanded = false;
 			$(function() {
 				var size = 100;
-				var sizeAfterExpand = $('#View_page_for_Accepted_task').height() + 35;
+				var sizeAfterExpand = $('#View_page_for_Accepted_task').height() + 48;
 				$('#View_page_for_Accepted_task ul').hide(0).parent();
-				var sizeBeforeExpand = $('#View_page_for_Accepted_task').height() + 35;
+				var sizeBeforeExpand = $('#View_page_for_Accepted_task').height() + 48;
 				$('#expand_accepted').css("bottom", sizeBeforeExpand);
 				$('#expand_accepted').on('click', function(e) {
 					e.stopPropagation();
@@ -1952,6 +2030,7 @@ function Accepted_view_page() {
 			hideLoadingIcon();
 			initMap('Accepted_page_map', 'distances', localStorage.getItem("Accepted_Task_id"));
 			localStorage.setItem("resume_option", "1");
+            updateResumeOption(localStorage.getItem("Accepted_Task_id"),"1")
 		} else {
 			showAlert("Unable to connect..!!", "WorkWide");
 			hideLoadingIcon();
@@ -2025,14 +2104,35 @@ function Accepted_Get_time_distance() {
 /*End of View Page Accepted task list  Functionality*/
 //-------------------------------------------------
 function Accepted_start_trip() {
-	navigator.notification.confirm("Are you sure you want to start this trip?", Accepted_start_trip_button, "WorkWide", ["Yes", "No"]);
+    if(localStorage.getItem("OnDuty")=="0"){
+        changeDutyCalledFrom=3;
+        askToUserCurrentDutyStatus();
+    }else{
+        navigator.notification.confirm("Are you sure you want to start this trip?", Accepted_start_trip_button, "WorkWide", ["Yes", "No"]);
+    }
 }
 
 function Accepted_start_trip_button(buttonIndex) {
 	if(buttonIndex == 1) {
-		Accepted_starttime();
-		localStorage.setItem("resume_option", 5);
-		changePage("#Accepted_End_trip_view_tasklist_page", "slide", false);
+       
+       var parameters = {
+       TOKEN: localStorage.getItem("TOKEN"),
+       taskid: localStorage.getItem("Accepted_Task_id"),
+       statusid: 5
+       };
+       ApploadingIcon();
+       QuinticaWebService("GET", "updatetaskStatus", parameters, function(response) {
+                          if(response.code == "1") {
+                          inProgressset = 1;
+                          Accepted_starttime();
+                          localStorage.setItem("resume_option", 5);
+                          changePage("#Accepted_End_trip_view_tasklist_page", "slide", false);
+                          } else {
+                          showAlert("Please try again..!!", "WorkWide");
+                          hideLoadingIcon()
+                          }
+                          });
+		
 	}
 }
 //-------------------------------------------------
@@ -2080,9 +2180,9 @@ function Accepted_End_trip_view_page() {
 			var isExpanded = false;
 			$(function() {
 				var size = 100;
-				var sizeAfterExpand = $('#View_page_End_trip_for_Accepted_task').height() + 35;
+				var sizeAfterExpand = $('#View_page_End_trip_for_Accepted_task').height() + 48;
 				$('#View_page_End_trip_for_Accepted_task ul').hide(0).parent();
-				var sizeBeforeExpand = $('#View_page_End_trip_for_Accepted_task').height() + 35;
+				var sizeBeforeExpand = $('#View_page_End_trip_for_Accepted_task').height() + 48;
 				$('#expand_accepted_end').css("bottom", sizeBeforeExpand);
 				$('#expand_accepted_end').on('click', function(e) {
 					e.stopPropagation();
@@ -2113,6 +2213,7 @@ function Accepted_End_trip_view_page() {
 			hideLoadingIcon();
 			//Accept_initMap();
 			initMap('Accepted_End_trip_page_map', 'distancess', localStorage.getItem("Accepted_Task_id"));
+            updateResumeOption(localStorage.getItem("Accepted_Task_id"),"5")
 		} else {
 			showAlert("Unable to connect..!!", "WorkWide");
 			hideLoadingIcon();
@@ -2210,44 +2311,49 @@ function Accepted_end_trip_button(buttonIndex) {
 }
 //-------------------------------------------------
 function Accepted_start_work_direct() {
-	navigator.notification.confirm("Are you sure you want to start work?", start_work_direct_button, "WorkWide", ["Yes", "No"]);
+    if(localStorage.getItem("OnDuty")=="0"){
+        changeDutyCalledFrom=4;
+        askToUserCurrentDutyStatus();
+    }else{
+        navigator.notification.confirm("Are you sure you want to start work?", start_work_direct_button, "WorkWide", ["Yes", "No"]);
+    }
 }
 
 function start_work_direct_button(buttonIndex) {
-                                               if(buttonIndex == 1) {
-                                               
-                                               var parameters = {
-                                               TOKEN: localStorage.getItem("TOKEN"),
-                                               taskid: localStorage.getItem("Accepted_Task_id"),
-                                               statusid: 5
-                                               };
-                                               ApploadingIcon();
-                                               QuinticaWebService("GET", "updatetaskStatus", parameters, function(response) {
-                                                                  if(response.code == "1") {
-                                                                  inProgressset = 1;
-                                                                  localStorage.setItem("resume_option", 5);
-                                                                  
-                                                                  ApploadingIcon();
-                                                                  var parameters = {
-                                                                  TOKEN: localStorage.getItem("TOKEN"),
-                                                                  task_id: localStorage.getItem("Accepted_Task_id"),
-                                                                  geo_km: geokm,
-                                                                  start_work: "1"
-                                                                  };
-                                                                  QuinticaWebService("GET", "taskTimeCalcu", parameters, function(response) {
-                                                                                     if(response.code == "1") {
-                                                                                     localStorage.setItem("START_WORK", "Y");
-                                                                                     changePage("#Accepted_Start_work_view_tasklist_page", "slide", false);
-                                                                                     hideLoadingIcon();
-                                                                                     }
-                                                                                     });
-                                                                  } else {
-                                                                  showAlert("Please try again..!!", "WorkWide");
-                                                                  hideLoadingIcon()
-                                                                  }
-                                                                  });
-                                               }
-                                               }
+   if(buttonIndex == 1) {
+   
+   var parameters = {
+   TOKEN: localStorage.getItem("TOKEN"),
+   taskid: localStorage.getItem("Accepted_Task_id"),
+   statusid: 5
+   };
+   ApploadingIcon();
+   QuinticaWebService("GET", "updatetaskStatus", parameters, function(response) {
+                      if(response.code == "1") {
+                      inProgressset = 1;
+                      localStorage.setItem("resume_option", 5);
+                      
+                      ApploadingIcon();
+                      var parameters = {
+                      TOKEN: localStorage.getItem("TOKEN"),
+                      task_id: localStorage.getItem("Accepted_Task_id"),
+                      geo_km: geokm,
+                      start_work: "1"
+                      };
+                      QuinticaWebService("GET", "taskTimeCalcu", parameters, function(response) {
+                         if(response.code == "1") {
+                         localStorage.setItem("START_WORK", "Y");
+                         changePage("#Accepted_Start_work_view_tasklist_page", "slide", false);
+                         hideLoadingIcon();
+                         }
+                         });
+                      } else {
+                      showAlert("Please try again..!!", "WorkWide");
+                      hideLoadingIcon()
+                      }
+                      });
+   }
+   }
 //-------------------------------------------------
 /*Start of View Page Start Work Direct Accepted task list  Functionality*/
 //-------------------------------------------------
@@ -2277,6 +2383,7 @@ function Accepted_Direct_work_view_page() {
 			hideLoadingIcon();
 			localStorage.setItem("resume_option", "2");
 			categoryList();
+            updateResumeOption(localStorage.getItem("Accepted_Task_id"),"2")
 		} else {
 			showAlert("Unable to connect..!!", "WorkWide");
 			hideLoadingIcon();
@@ -2391,8 +2498,11 @@ function Accepted_Signture_and_feedback_view_page() {
 </li>");
 			$("#Accepted_Signature_and_feeback_view_task").listview("refresh");
 			hideLoadingIcon();
-			localStorage.setItem("resume_option", "3");
+			
 			taskCompleted();
+       
+            updateResumeOption(localStorage.getItem("Accepted_Task_id"),"3");
+       
 		} else {
 			showAlert("Unable to connect..!!", "WorkWide");
 			hideLoadingIcon();
@@ -2845,7 +2955,14 @@ function signature_feedback_as_per_task() {
 		if(response.code == "1") {
 			dataUrl_images_sign = "";
 			clearCanvas();
-			end_task_Status();
+			//end_task_Status();
+           localStorage.setItem("Assigned_button_id", 0);
+           inAccepted = 0;
+           inProgressset = 0;
+           localStorage.setItem("Accepted_Task_id", "");
+           localStorage.setItem("Pending_option", "");
+           localStorage.setItem("resume_option", "");
+           changePage("#Accepted_tasks_page", "slide", false);
             $("#endtaskcomment").val("");
 		} else {
 			showAlert("Unable to connect..!!", "WorkWide");
@@ -2912,9 +3029,12 @@ function Completed_task_list() {
 		userid: localStorage.getItem("user_id"),
 		statusType: localStorage.getItem("Completed")
 	};
-	ApploadingIcon();
+	
 	QuinticaWebService("GET", "task_list", parameters, function(response) {
-		if(response.code == "1") {
+       try{
+        refresher.destroyProgress();
+       }catch(error){}
+        if(response.code == "1") {
 			if(Object.keys(response.data).length == 0) {
 				showAlert("No Task ..!!", "WorkWide");
 			}
@@ -2950,9 +3070,12 @@ function pending_task_list() {
 		userid: localStorage.getItem("user_id"),
 		statusType: localStorage.getItem("Pending")
 	};
-	ApploadingIcon();
+
 	QuinticaWebService("GET", "task_list", parameters, function(response) {
-		if(response.code == "1") {
+       try{
+        refresher.destroyProgress();
+       }catch(error){}
+        if(response.code == "1") {
 			if(Object.keys(response.data).length == 0) {
 				showAlert("No Task ..!!", "WorkWide");
 			}
@@ -2979,7 +3102,12 @@ function pending_task_list() {
 }
 
 function Rejecting_the_task_option() {
-	navigator.notification.confirm("Confirm to Reject the task?", Rejecting_the_task_option_button_label, "WorkWide", ["Yes", "No"]);
+    if(localStorage.getItem("OnDuty")=="0"){
+        changeDutyCalledFrom=2;
+        askToUserCurrentDutyStatus();
+    }else{
+        navigator.notification.confirm("Confirm to Reject the task?", Rejecting_the_task_option_button_label, "WorkWide", ["Yes", "No"]);
+    }
 }
 
 function Rejecting_the_task_option_button_label(buttonIndex) {
@@ -3702,9 +3830,10 @@ function categoryList() {
 				$.each(obj, function(key, value) {
 					var value1 = value.replace(/ /g, "_");
 					$("#categoryListview").append("<li data-icon='myicon6'><a href='#' onclick='categoryFields1(" + key + ",\"" + value + "\");' class='wborderradius ui-nodisc-icon " + value1 + "'>" + value + "</a></li>");
-					if(apiFlag == 0) {
-						categoryFields(key, value1);
-					}
+                       console.log(key +" KEY CATEGORY VALUE "+ value1);
+//                    if(apiFlag == 0) {
+//                        categoryFields(key, value1);
+//                    }
 				});
 				if(AssetCategory == 1 || AssetCategory == "1") {
 					$("#categoryListview").append("<li data-icon='myicon6'><a href='#' onclick=changePage('#Update_assets','slide',false); class='wborderradius ui-nodisc-icon'>Assets</a></li>");
@@ -3726,12 +3855,13 @@ function categoryList() {
 			});
 			$("#categoryListview").listview("refresh");
 			hideLoadingIcon();
+            apiFlag = 1;
 		} else {
 			showAlert("Unable to connect..!!", "WorkWide");
 			hideLoadingIcon();
 		}
 	});
-	apiFlag = 1;
+
 }
 
 function categoryFields(Categoryid, value) {
@@ -3744,7 +3874,8 @@ function categoryFields(Categoryid, value) {
 }
 
 function categoryFields1(Categoryid, value) {
-	localStorage.setItem("cid", "");
+    ApploadingIcon();
+    localStorage.setItem("cid", "");
 	localStorage.setItem("cname", "");
 	localStorage.setItem("cid", Categoryid);
 	localStorage.setItem("cname", value);
@@ -3757,6 +3888,9 @@ function retainValues(id) {
 
 function categoryFieldsList(a) {
 	ApploadingIcon();
+   try{
+        $("#categoryContent").empty();
+   }catch(error){}
 	var parameters = {
 		TOKEN: localStorage.getItem("TOKEN"),
 		task_id: localStorage.getItem("Accepted_Task_id"),
@@ -3770,16 +3904,21 @@ function categoryFieldsList(a) {
 	var catnamediv = localStorage.getItem("cname").replace(/ /g, "_") + "formdiv";
 	QuinticaWebService("GET", "updateTaskScreen", parameters, function(response) {
 		if(response.code == "1") {
+                                          console.log(catname +" DATA OF CATEGORY0 "+ catnamediv);
 			if(response.data == null || response.data == "null" || response.data == "" || response.data.length == 0) {
 				hideLoadingIcon();
 			} else {
 				ApploadingIcon();
-				if(apiFlag == 1) {
+				if(apiFlag == -1) {
+                       console.log(catname +" DATA OF CATEGORY 1: "+ catnamediv);
 					$(".cform").css("display", "none");
 					$("#" + catnamediv).css("display", "block");
 					hideLoadingIcon();
 				} else {
-					$("#" + catnamediv).remove();
+                       try{
+                            $("#" + catnamediv).remove();
+                       }catch(error){}
+                                          console.log(catname +" DATA OF CATEGORY2 "+ catnamediv);
 					$("#categoryContent").append("<div class='cform' id=" + catnamediv + " ><form id=" + catname + "></form></div>");
 					$(".cform").css("display", "none");
 					$("#" + catnamediv).css("display", "block");
@@ -3789,6 +3928,7 @@ function categoryFieldsList(a) {
 					var s = -1;
 					var iselect = 0;
 					for(i = 0; i < len; i++) {
+                       try{
 						response.data[i].label = response.data[i].label.charAt(0).toUpperCase() + response.data[i].label.slice(1);
 						if(response.data[i].option_type == "TEXT") {
 							if(response.data[i].required_status == "1" || response.data[i].required_status == 1) {
@@ -3905,7 +4045,8 @@ function categoryFieldsList(a) {
 							}
 							$("#" + response.data[i].type_values[0].replace(/ /g, "_")).prop('checked', true);
 						}
-					}
+                       }catch(error){console.log("ERROR MSG : "+error.message)}
+                       }
 					$("#" + catname).append("<br><br><a href='' class='ui-btn btngreycolor ui-corner-all' onclick='categorySumbit();'>SUBMIT</a>");
 					hideLoadingIcon();
 				}
@@ -4017,7 +4158,7 @@ function categorySumbit() {
 	$("#categoryContent").find("#" + localStorage.getItem("cname").replace(/ /g, "_") + "form").find(".requiredClass").each(function(k, v) {
 		console.log(localStorage.getItem("cname").replace(/ /g, "_") + "form");
 		console.log($("." + z + k).val() + "." + z + k);
-		if($("." + z + k).val() == "" || $("." + z + k).val() == 0 || $("." + z + k).val() == "0" || $("." + z + k).val() == "null" || $("." + z + k).val() == null) {
+		if($("." + z + k).val() == "" || $("." + z + k).val() == "null" || $("." + z + k).val() == null) {
 			validationFlag1 = true;
 		}
 	});
@@ -4189,6 +4330,20 @@ function retaining_images_from_backend() {
                        isAddMore=true;
                        }
 				}
+                       try{
+                       $("#addMoreAttachment" ).remove();
+                       $(".attachementcontainer").append("<img id='addMoreAttachment' class='attachementcontainer_class' />");
+                       $("#addMoreAttachment").attr("src", "img/plus-2.png");
+                       $("#addMoreAttachment").click(function() {
+                                 if(isAddMore){
+                                 isChangeImage=false;
+                                 Attachement_cameraphoto();
+                                 }else{
+                                 showAlert('Please select attachment for available option first !', "WorkWide");
+                                 }
+                                 
+                                 });
+                       }catch(error){}
 			}
 		}
 	});
@@ -4227,7 +4382,7 @@ function offline_Workwide_DB() {
             showAlert("You Cannot go offline with 0 task", "WorkWide");
             $("#nav-panel_landing").panel("close");
         } else {
-            inProgressset = 0;
+      
             no_of_offlinetasks = Object.keys(response.data).length;
             var len = Object.keys(response.data).length;
             var db = window.openDatabase("database_Workwide", "1.0", "database_Workwide_table", 2 * 1024 * 1024)
@@ -4592,15 +4747,11 @@ function count_for_In_Progress(tx, results) {
 	//console.log(len3);
 	document.getElementById("offline_current").innerHTML = "";
 	document.getElementById("offline_current").innerHTML = len3;
-	if(len3 == "1" || len3 == 1) {
+	if(len3 == "1" || len3 > 0) {
 		document.getElementById("offline_current").innerHTML = "";
 		document.getElementById("offline_current").innerHTML = len3;
-		$("#hide_show_buttonsss_offline").css("display", "none");
-		inProgressflag = 0;
+			
 		inProgressset = 1;
-	} else {
-		$("#hide_show_buttonsss_offline").css("display", "block");
-		inProgressflag = 1;
 	}
 }
 
@@ -4618,7 +4769,7 @@ function count_for_Accepted(tx, results) {
 	document.getElementById("offline_Accepted").innerHTML = len5;
 	if(len5 == "1" || len5 > 0) {
 		inAccepted = 1;
-		$("#hide_show_buttonsss_offline").css("display", "none");
+		
 	}
 }
 /* End of code for taking total count */
@@ -4719,16 +4870,16 @@ function offline_Assigned_view(taskid, num) {
 	localStorage.setItem("offline_Assigned_task_id", "");
 	localStorage.setItem("offline_Assigned_task_id", taskid);
 	localStorage.setItem("num", num);
-	//    localStorage.getItem("Assigned_button_id") == 0
-	console.log("offlineAssigned_view" + localStorage.getItem("num") + "Accepted" + inAccepted + "inset" + inProgressset + "" + inAcceptedmultiple);
+     if(localStorage.getItem("num") == 0 && inAcceptedmultiple == 1) {
+     $("#hide_show_buttonsss_offline").css("display", "block");
+    }else{
 	if(localStorage.getItem("num") == 0 && inAccepted == 0 && inProgressset == 0) {
 		$("#hide_show_buttonsss_offline").css("display", "block");
 	} else {
 		$("#hide_show_buttonsss_offline").css("display", "none");
 	}
-	if(inAcceptedmultiple == 1) {
-		$("#hide_show_buttonsss_offline").css("display", "block");
-	}
+    }
+	
 	changePage("#View_page_for_offline_Assigned_task", "slide", false);
 }
 /* End of code for offline Assigned Page view page */
@@ -4780,7 +4931,9 @@ function offline_assign_to_accepted_button(buttonIndex) {
 		var db = window.openDatabase("database_Workwide", "1.0", "database_Workwide_table", 2 * 1024 * 1024)
 		db.transaction(change_status_id, error_Workwide);
 		if(inAcceptedmultiple == 0) {
-			changePage("#offline_Accepted_view_page", "slide", false);
+			
+            startclick = 1;
+            changePage("#offline_Accepted_view_page", "slide", false);
 		} else {
 			changePage("#offline_Accepted_tasks_page", "slide", false);
 		}
@@ -4904,6 +5057,14 @@ function data_list_for_Accepted(tx, results) {
 }
 /*  End of Code for Offline Accepted Tasks */
 //==================================================================================================================
+                                                                         
+ function offline_Accepted_view_page() {
+    if(inProgressset==1){
+      startclick=1;
+      changePage("#offline_Accepted_view_page", "slide", false);
+    }
+ }
+
 /*Code for offline in-progress view page Tasks */
 function offline_Accepted_view(taskid, nums) {
 	localStorage.setItem("offline_Accepted_task_id", "");
@@ -5355,7 +5516,7 @@ function categorySumbit_offline_button() {
 	var z = localStorage.getItem("offline_cname").replace(/ /g, "_") + "reqtext";
 	$("#_offline_categoryContent").find("#" + localStorage.getItem("offline_cname").replace(/ /g, "_") + "form").find(".requiredClass").each(function(k, v) {
 		//console.log(localStorage.getItem("offline_cname").replace(/ /g, "_") + "form");
-		if($("." + z + k).val() == "" || $("." + z + k).val() == 0 || $("." + z + k).val() == "0" || $("." + z + k).val() == "null" || $("." + z + k).val() == null) {
+		if($("." + z + k).val() == "" || $("." + z + k).val() == "null" || $("." + z + k).val() == null) {
 			validationFlag1 = true;
 		} else {
 			validationFlag1 = false;
@@ -5850,6 +6011,9 @@ function btnLabel_Online_from_offline(buttonIndex) {
 	if(buttonIndex == 1) {
 		var textonlineloading = "You are going online\n" + no_of_offlinetasks + " Uploading items";
 		Apploadingupicon(textonlineloading);
+         try{
+         updateResumeOption(localStorage.getItem("offline_Accepted_task_id"),localStorage.getItem("resume_option"));
+         }catch(error){}
         _sending_data_to_backend();
         setTimeout(function() {
             offlinetoonline(offlineData);
@@ -5864,7 +6028,12 @@ function btnLabel_Online_from_offline(buttonIndex) {
 /*==================================================================================================================*/
 /* Code for Going Offline */
 function Going_Offline() {
-	navigator.notification.confirm("Confirm to go Offline?", btnLabel_Going_Offline_from_online, "WorkWide", ["Yes", "No"]);
+	
+    if(localStorage.getItem("OnDuty")=="0"){
+        changeDutyCalledFrom=6;
+        askToUserCurrentDutyStatus();
+    }else{ navigator.notification.confirm("Confirm to go Offline?", btnLabel_Going_Offline_from_online, "WorkWide", ["Yes", "No"]);
+    }
 }
 
 function btnLabel_Going_Offline_from_online(buttonIndex) {
@@ -5943,8 +6112,13 @@ function getSampleFile(dirEntry, serverUrl, imageflag) {
 			var blob = new Blob([this.response], {
 				type: 'image/png'
 			});
-			if(imageflag == 0) saveFile(dirEntry, blob, "profile.png", imageflag);
-			else saveFile(dirEntry, blob, "entity.png", imageflag);
+                if(imageflag == 0){
+                    saveFile(dirEntry, blob, "profile.png", imageflag);
+                }
+			else
+                {
+                    saveFile(dirEntry, blob, "entity.png", imageflag);
+                }
 		}
 	};
 	xhr.send();
@@ -5984,6 +6158,7 @@ function readBinaryFile(fileEntry, imageflag) {
 		reader.onloadend = function() {
 			console.log("Successful file write: " + this.result);
 			console.log(fileEntry.fullPath + ": " + this.result);
+            isLogoDownload=true;
 			var blob = new Blob([new Uint8Array(this.result)], {
 				type: "image/png"
 			});
@@ -6656,6 +6831,141 @@ function upload_offline_Images(parameters){
                }, error_Workwide);
  }
  
- //----------------------------- End Delete Offline Task Attachment Information -----------------------------------
+ //----------------------------- End Delete Offline Task Attachment Information ------------------------------
+ 
+ //------------------------------ pull to refresh ------------------------
+ function pullToRefreshList(id){
+ 
+    if(refresher!=null){
+      refresher.destroy();
+      refresher=null;
+    }
+    refresher = PullToRefresh.init({
+        mainElement: '#'+id,
+                
+        callApi: function(){
+                // What do you want to do when the user does the pull-to-refresh gesture
+                // window.location.reload();
+                
+                //  $("body").append("<div class='modalWindow' />");
+                if(id=="task_view_accepted"){
+                    Assigned_task_list();
+                }else if(id=="Accepted_Tasks_list"){
+                    Accepted_Tasks_Page();
+                }else if(id=="Completed_task_view_accepted"){
+                    Completed_task_list();
+                }else if(id=="pending_task_view_accepted"){
+                    pending_task_list();
+                }
+                
+                
+        },
+                
+    });
+}
+
+                                                                         
+                                                                         
+ //-------------------------------------------------
+/* check on duty mode  Functionality*/
+ //-------------------------------------------------
+ 
+ 
+ function changeDuty() {
+
+    var current_mode=localStorage.getItem("OnDuty");
+    try{
+ 
+         if(current_mode=="0"){
+           current_mode=1;
+         }else{
+           current_mode=0;
+        }
+      }catch(error){}
+ 
+ var parameters = {
+ TOKEN: localStorage.getItem("TOKEN"),
+ userid: localStorage.getItem("user_id"),
+ on_duty: current_mode
+ };
+ QuinticaWebService("POST", "DutyMode", parameters, function(response) {
+                    if(response.code == "1") {
+                    
+                    try{
+                    
+                    if(localStorage.getItem("OnDuty")=="0"){
+                    localStorage.setItem("OnDuty","1")
+                    }else{
+                    localStorage.setItem("OnDuty","0")
+                    }
+                    
+                    $('.toggle-button').toggleClass('toggle-button-selected');
+                    hideLoadingIcon();
+                    }catch(error){
+                    hideLoadingIcon();
+                    }
+                    if(changeDutyCalledFrom==1){
+                    Confirm_To_Accept_Task_Button(1)
+                    }else if(changeDutyCalledFrom==2){
+                    Rejecting_the_task_option_button_label(1);
+                    }else if(changeDutyCalledFrom==3){
+                    Accepted_start_trip_button(1)
+                    }else if(changeDutyCalledFrom==4){
+                    start_work_direct_button(1)
+                    }else if(changeDutyCalledFrom==5){
+                    start_click();
+                    }else if(changeDutyCalledFrom==6){
+                    offline_Workwide_DB();
+                    }
+                    
+                    }
+                    });
+ }
+ 
+ 
+ 
+ function askToUserCurrentDutyStatus() {
+ navigator.notification.confirm("You can not interact with the tasks while off-duty.\n Do you want to go on duty now?", userCurrentDutyStatus, "WorkWide", ["Yes", "No"]);
+ }
+ 
+ function userCurrentDutyStatus(buttonIndex) {
+ if (buttonIndex == 1) {
+ changeDuty();
+ }
+ }
+ 
+ 
+ function onDutyCall() {
+ 
+ changeDutyCalledFrom=0;
+ changeDuty();
+ 
+ }
+      
+ 
+ //-------------------------------------------------
+ /*Start of resume option Update Functionality*/
+ //-------------------------------------------------
+ 
+ 
+ function updateResumeOption(task_id, resumeActivity) {
+  localStorage.setItem("resume_option", resumeActivity);
+    var parameters = {
+    taskid: task_id,
+    resume_option: resumeActivity,
+    userid: localStorage.getItem("user_id"),
+    TOKEN: localStorage.getItem("TOKEN")
+  };
+  QuinticaWebServiceForBackgroundCall("POST", "last_update_screen", parameters, function(response) {
+     if(response.code == "1") {
+     
+     
+     
+     }
+     });
+ }
+ //-------------------------------------------------
+ /*End of resume option Update Functionality*/
+ //-------------------------------------------------
  
 

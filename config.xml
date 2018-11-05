@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.quintica.workwide" version="2.0" versionCode="9" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
+<widget id="com.quintica.workwide" version="2.4" versionCode="13" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
     <gap:config-file parent="CFBundleVersion" platform="ios">
-        <string>2.0</string>
+        <string>2.4</string>
     </gap:config-file>
     <name>WorkWide</name>
     <description>
