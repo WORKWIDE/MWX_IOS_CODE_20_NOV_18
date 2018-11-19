@@ -22,6 +22,7 @@ var logoBase64=null;
 var isLogoDownload=false;
 var refresher=null;
 var changeDutyCalledFrom=0;
+var attachment_class="";
 var app = {
 	initialize: function() {
 		this.bindEvents();
@@ -115,6 +116,7 @@ var acceptPageFromLandingPage = false;
 //============================================
 //code for push notification
 //============================================
+//,"clearBadge": true
 function PushNotificationRegistration() {
 	var push = PushNotification.init({
 		android: {
@@ -132,14 +134,15 @@ function PushNotificationRegistration() {
 		windows: {}
 	});
 	push.on('registration', function(data) {
-		localStorage.setItem("DevieToken", "");
+            //alert("NOTIFICATION ID : "+data.registrationId);
+            localStorage.setItem("DevieToken", "");
 		localStorage.setItem("DevieToken", data.registrationId);
 		console.log('notification id : ' + data.registrationId);
 	});
 	push.on('notification', function(data) {
 		if(data.additionalData.foreground) {
 			console.log("foreground" + data);
-			notification_counts_list();
+			notification_counts_list(1);
 			var x = document.getElementById("snackbar").text == ""
 			x.className = "show";
 			setTimeout(function() {
@@ -153,10 +156,12 @@ function PushNotificationRegistration() {
 			});
 		}
 	});
-	push.on('error', function(e) {});
+	push.on('error', function(e) {
+                        //alert("NOTIFICATION REG ERROR : "+e.message);
+            });
 }
 
-function notification_counts_list() {
+function notification_counts_list(counterCall) {
 	var parameters = {
 		TOKEN: localStorage.getItem("TOKEN")
 	};
@@ -169,7 +174,9 @@ function notification_counts_list() {
 				document.getElementById("notification_list_count").innerHTML = "";
 				document.getElementById("notification_list_count").innerHTML = response.count;
 				var countss = response.count;
-				listcounts();
+				 if(counterCall==1){
+                       listcounts();
+                       }
 			}
             hideLoadingIcon();
 		} else {
@@ -334,7 +341,7 @@ function saveSignature() {
 	} else {
 		close_task_list();
 	}
-	// hideLoadingIcon()
+	
 }
 //-------------------------------------------------
 /*start of Logout  Functionality*/
@@ -429,7 +436,7 @@ $(document).on("pageshow", function(event, data) {
 	var activePage = $.mobile.pageContainer.pagecontainer("getActivePage");
 	$(".pagemargin").removeClass("addOpacity");
 	$(".versioncode").html("");
-	$(".versioncode").html("Version 2.4");
+	$(".versioncode").html("Version 2.5");
 	localStorage.setItem("previous_page_id", "");
 	localStorage.setItem("previous_page_id", data.prevPage.attr('id'));
 	//var activePage = $.mobile.pageContainer.pagecontainer("getActivePage");
@@ -473,7 +480,7 @@ $(document).on("pageshow", function(event, data) {
 			listcounts();
 			current_position();
 			localStorage.setItem("Pending_option", "");
-			notification_counts_list();
+			notification_counts_list(0);
 			localStorage.setItem("Notification_value_to_View_page", "");
             isOfflineAppWorking=false;
             try{
@@ -482,7 +489,7 @@ $(document).on("pageshow", function(event, data) {
                updateMapInterval = setInterval(function(){ get_current_position(); }, 60000*2);
                get_current_position();
              }
-            }, 20000);
+            }, 2000);
                }catch(error){}
                
                try{
@@ -842,7 +849,7 @@ function showAlert(alertmessage, title, callBack_func) {
 //var webServiceUrl="http://app.workwidemobile.com/Api/";
 
 //local server
-var webServiceUrl = "http://192.168.1.145/quintica/Api/";
+var webServiceUrl = "http://192.168.1.149/quintica/Api/";
 
 //test local server
 //var webServiceUrl = "http://192.168.1.114/quintica/Api/";
@@ -1061,7 +1068,7 @@ function loginIn() {
 			"password": "" + $("#password").val().trim() + "",
 			device_id: localStorage.getItem("DevieToken"),
 			device_OS: device.platform,
-			versioncode: "2.4"
+			versioncode: "2.5"
 		};
         ApploadingIcon();
 		QuinticaWebService("POST", "login", parameters, function(response) {
@@ -1117,7 +1124,7 @@ function loginIn() {
                     updateMapInterval = setInterval(function(){ get_current_position(); }, 60000*2);
                     get_current_position();
                }
-             }, 20000);
+             }, 2000);
             }catch(error){}
 				ApploadingIcon();
 				acceptPageFromLandingPage = false;
@@ -1140,7 +1147,9 @@ function loginIn() {
 /*Start of Location Update Functionality*/
 //-------------------------------------------------
 function get_current_position() {
-    navigator.geolocation.getCurrentPosition(updateUserLocation);
+      if(localStorage.getItem("OnDuty")=="1"){
+          navigator.geolocation.getCurrentPosition(updateUserLocation);
+      }
 }
 
 
@@ -1359,14 +1368,17 @@ function inProgress() {
 	};
 	QuinticaWebService("GET", "inprogessTaskId", parameters, function(response) {
 		if(response.code == "1") {
+                       
            localStorage.setItem("Accepted_Task_id", response.TaskId[0].id);
-           
+
            if (response.TaskId[0].resume_option == "" || response.TaskId[0].resume_option == null) {
            
            localStorage.setItem("resume_option", 1);
+
            } else {
            
            localStorage.setItem("resume_option", response.TaskId[0].resume_option);
+
            }
 		} else {
 			showAlert("Unable to connect..!!", "WorkWide");
@@ -1452,6 +1464,7 @@ function start_click() {
 	acceptPageFromLandingPage = true;
 	ApploadingIcon();
 	startclick = 1;
+
 	if(inProgressset == 0) {
 		acceptPageFromLandingPage = false;
         hideLoadingIcon();
@@ -2602,6 +2615,7 @@ function onSuccess_attach(imageURI) {
                 $("#edit_custom_fields").empty();
             }catch(err){}
             $("#custom_fields").empty();
+            attachment_class="AttachentPreview"
         try{
         for(var i=0;i<newAttachmentData.length;i++){
             if(newAttachmentData[i].option_type=="TEXT" || newAttachmentData[i].option_type=="NUMBER"){
@@ -2634,7 +2648,7 @@ function onSuccess_attach(imageURI) {
                $("#custom_fields").append("<fieldset style='margin-top:10px;' id='custom_field"+i+"' data-role='controlgroup'><legend>"+newAttachmentData[i].label+"</legend></fieldset>");
                  try{
                     for(var k=0;k<newAttachmentData[i].type_values.length;k++){
-                            var checkbox="<div><label><input type='checkbox' name='checkbox-"+k+"' id='checkbox-"+k+"' class='custom' value='"+newAttachmentData[i].type_values[k]+"' /> "+ newAttachmentData[i].type_values[k] +"</label></div>";
+                            var checkbox="<div><label><input type='checkbox' name='checkbox-"+k+"' id='checkbox-"+k+"' class='custom"+attachment_class+"' value='"+newAttachmentData[i].type_values[k]+"' /> "+ newAttachmentData[i].type_values[k] +"</label></div>";
                             $("#custom_field"+i).append(checkbox);
                         }
                 }catch(error){}
@@ -2643,7 +2657,7 @@ function onSuccess_attach(imageURI) {
                $("#custom_fields").append("<fieldset style='margin-top:10px;' id='custom_field"+i+"' data-role='controlgroup'><legend>"+newAttachmentData[i].label+"</legend></fieldset>");
                    try{
                    for(var k=0;k<newAttachmentData[i].type_values.length;k++){
-                            var radioButton="<div><label><input type='radio' name='radio-choice' id='radio-choice-"+k+"' value='"+newAttachmentData[i].type_values[k]+"' /> "+ newAttachmentData[i].type_values[k] +"</label></div>";
+                            var radioButton="<div><label><input type='radio' name='radio-choice' id='radio-choice-"+k+"' class='radio"+attachment_class+"' value='"+newAttachmentData[i].type_values[k]+"' /> "+ newAttachmentData[i].type_values[k] +"</label></div>";
                             $("#custom_field"+i).append(radioButton);
                         }
                 }catch(error){}
@@ -2745,6 +2759,7 @@ function onShowEditAttachent()
             $("#custom_fields").empty();
         }catch(err){}
         $("#edit_custom_fields").empty();
+        attachment_class="EditAttachent"
         try{
         for(var i=0;i<newAttachmentData.length;i++){
             if(newAttachmentData[i].option_type=="TEXT" || newAttachmentData[i].option_type=="NUMBER"){
@@ -2791,7 +2806,7 @@ function onShowEditAttachent()
                          }
                                                
                     }
-                    var checkbox="<div><label><input type='checkbox' name='checkbox-"+k+"' id='checkbox-"+k+"' class='custom' value='"+newAttachmentData[i].type_values[k]+"' "+isChecked+" /> "+ newAttachmentData[i].type_values[k] +"</label></div>";
+                    var checkbox="<div><label><input type='checkbox' name='checkbox-"+k+"' id='checkbox-"+k+"' class='custom"+attachment_class+"' value='"+newAttachmentData[i].type_values[k]+"' "+isChecked+" /> "+ newAttachmentData[i].type_values[k] +"</label></div>";
                     $("#custom_field"+i).append(checkbox);
                 }
                }catch(error){}
@@ -2804,7 +2819,7 @@ function onShowEditAttachent()
                     if(newAttachmentData[i].type_values[k]==newAttachmentData[i].value){
                         isChecked='checked';
                     }
-                    var radioButton="<div><label><input type='radio' name='radio-choice' id='radio-choice-"+k+"' value='"+newAttachmentData[i].type_values[k]+"' "+isChecked+" /> "+ newAttachmentData[i].type_values[k] +"</label></div>";
+                    var radioButton="<div><label><input type='radio' name='radio-choice' id='radio-choice-"+k+"' class='radio"+attachment_class+"' value='"+newAttachmentData[i].type_values[k]+"' "+isChecked+" /> "+ newAttachmentData[i].type_values[k] +"</label></div>";
                     $("#custom_field"+i).append(radioButton);
                 }
              }catch(error){}
@@ -2942,6 +2957,7 @@ function savebase64AsImageFile(folderpath, filename, content, contentType) {
 /* Start of updating the customer details  page functionality*/
 //-------------------------------------------------
 function signature_feedback_as_per_task() {
+    ApploadingIcon();
     var TaskEndComment=$("#endtaskcomment").val();
 	var parameters = {
 		TOKEN: localStorage.getItem("TOKEN"),
@@ -2963,7 +2979,8 @@ function signature_feedback_as_per_task() {
            localStorage.setItem("Pending_option", "");
            localStorage.setItem("resume_option", "");
            changePage("#Accepted_tasks_page", "slide", false);
-            $("#endtaskcomment").val("");
+           $("#endtaskcomment").val("");
+           hideLoadingIcon();
 		} else {
 			showAlert("Unable to connect..!!", "WorkWide");
 			hideLoadingIcon();
@@ -3482,12 +3499,12 @@ function getAttachmentInfo(){
                        }
                                                
                 }else if(newAttachmentData[i].option_type=="RADIO"){
-                        if(isEmptyVal($(":radio:checked").val())){
+                        if(isEmptyVal($("input[class='radio"+attachment_class+"']:checked").val())){
                             showAlert('Please select '+newAttachmentData[i].label, 'WorkWide');
                             return null;
                         }
                 }else if(newAttachmentData[i].option_type=="CHECKBOX"){
-                        if(isEmptyVal($("input[class='custom']:checked").val())){
+                        if(isEmptyVal($("input[class='custom"+attachment_class+"']:checked").val())){
                             showAlert('Please select '+newAttachmentData[i].label, 'WorkWide');
                             return null;
                         }
@@ -3499,10 +3516,10 @@ function getAttachmentInfo(){
                }
         }
         if(newAttachmentData[i].option_type=="RADIO"){
-            jsonObj[newAttachmentData[i].id]= $(":radio:checked").val();
+            jsonObj[newAttachmentData[i].id]= $("input[class='radio"+attachment_class+"']:checked").val();
             attachment_data.push(jsonObj);
         }else if(newAttachmentData[i].option_type=="CHECKBOX"){
-            $.each($("input[class='custom']:checked"), function(){
+            $.each($("input[class='custom"+attachment_class+"']:checked"), function(){
             chkBoxes.push($(this).val());
         });
         jsonObj[newAttachmentData[i].id]= chkBoxes;
@@ -4082,11 +4099,12 @@ function dropdownDependson(id, d_id) {
 					var selecctvalue = response.data[i].replace(/'/g, "");
 					option += "<option value='" + selecctvalue + "'>" + response.data[i] + "</option>";
 				}
-			}
+			
 			$("#" + d_id).html("");
 			$("#" + d_id).append(option);
 			$("#" + d_id).selectmenu("refresh", true);
-			hideLoadingIcon();
+        }
+        hideLoadingIcon();
 		} else {
 			showAlert("Unable to connect..!!", "WorkWide");
 			hideLoadingIcon();
@@ -4254,7 +4272,9 @@ function close_task_list() {
 function btnLabel_close_task_list(buttonIndex) {
 	if(buttonIndex == 1) {
 		signature_feedback_as_per_task();
-	}
+    }else{
+        hideLoadingIcon();
+    }
 }
 
 function filterReasons() {
@@ -6063,7 +6083,9 @@ function _closethe_task_as_completed_offline(buttonIndex) {
 	if(buttonIndex == 1) {
 		var db = window.openDatabase("database_Workwide", "1.0", "database_Workwide_table", 2 * 1024 * 1024)
 		db.transaction(_updating_in_progress_as_completed, error_Workwide);
-	}
+     }else{
+        hideLoadingIcon();
+     }
 }
 /*==================================================================================================================*/
 function _updating_in_progress_as_completed(tx) {
@@ -6656,18 +6678,18 @@ function getFileName(path) {
      
      function success_Workwide(tx) {
 
-     var res = "CREATE TABLE IF NOT EXISTS AttachmentDocInfo( task_id TEXT, attachment_doc_id TEXT, attachment_doc_info TEXT, latitude TEXT, langitude TEXT, isSelectedFrom TEXT )";
+     var res = "CREATE TABLE IF NOT EXISTS AttachmentDocInfo( task_id TEXT, attachment_doc_id TEXT, attachment_doc_info TEXT, latitude TEXT, langitude TEXT, isSelectedFrom TEXT, imageId TEXT, synced TEXT )";
      
-                                                                         console.log(res+" VAlue : "+isUpdate);
+     console.log(res+" VAlue : "+isUpdate);
      //Code for table creation
      tx.executeSql(res);
      var query="";
      if(isUpdate){
-        query="UPDATE AttachmentDocInfo SET task_id = '"+taskId+"' , attachment_doc_id = '"+attachmentInfoId+"', attachment_doc_info = '"+attachmentDocInformation+"', latitude= '"+latitude+"', langitude = '"+langitude+"', isSelectedFrom = '"+isSelectedFrom+"' WHERE attachment_doc_id = '"+attachmentInfoId+"' ";
+        query="UPDATE AttachmentDocInfo SET task_id = '"+taskId+"' , attachment_doc_id = '"+attachmentInfoId+"', attachment_doc_info = '"+attachmentDocInformation+"', latitude= '"+latitude+"', langitude = '"+langitude+"', isSelectedFrom = '"+isSelectedFrom+"', synced = '0' WHERE attachment_doc_id = '"+attachmentInfoId+"' ";
                                                                          
      }
     else{
-         query="INSERT INTO AttachmentDocInfo(task_id , attachment_doc_id, attachment_doc_info, latitude, langitude, isSelectedFrom ) VALUES ('"+taskId+"' , '"+attachmentInfoId+"' , '"+attachmentDocInformation+"' , '"+latitude+"' , '"+langitude+"' ,'"+isSelectedFrom+"' )";
+         query="INSERT INTO AttachmentDocInfo(task_id , attachment_doc_id, attachment_doc_info, latitude, langitude, isSelectedFrom, imageId, synced ) VALUES ('"+taskId+"' , '"+attachmentInfoId+"' , '"+attachmentDocInformation+"' , '"+latitude+"' , '"+langitude+"' ,'"+isSelectedFrom+"' , '' , '0' )";
     }
      console.log(query);
      tx.executeSql(query);
@@ -6728,40 +6750,52 @@ function getFileName(path) {
         if(JSON.parse(results.rows.item(0).attachment_doc_info).length>=1){
          imgData=JSON.parse(results.rows.item(0).attachment_doc_info);
         }
+         if(results.rows.item(0).synced=="1")
+         {
+            loopval=loopval+1;
+            getOfflineSavedImage();
+            return;
+         }
         var parameters = {
            TOKEN: localStorage.getItem("TOKEN"),
            task_id: results.rows.item(0).task_id,
            latitude: results.rows.item(0).latitude,
            langitude: results.rows.item(0).langitude,
-           imageId:'',
+           imageId:results.rows.item(0).imageId,
            attachmentInfo: imgData,
            customer_document: AttachedImgData,
            upload_from_gallary: results.rows.item(0).isSelectedFrom,
            offline_mode:"1"
      
         };
-        upload_offline_Images(parameters);
+        upload_offline_Images(parameters, results.rows.item(0).attachment_doc_id);
      }catch(error){
         loopval=loopval+1;
         getOfflineSavedImage();
-        deleteTaskAttachmentInfo();
+        //deleteTaskAttachmentInfo();
      }
     }
 }
-function upload_offline_Images(parameters){
+function upload_offline_Images(parameters, attachment_doc_id){
    QuinticaWebService("POST", "updateTaskCustomerDocument", parameters, function(response) {
                 if(response.code == "1") {
                   console.log("ATTACHMENT UPLOADED SUCCESSFULLY ");
                   try{
                       loopval=loopval+1;
                       getOfflineSavedImage();
-                      deleteTaskAttachmentInfo();
+                      //deleteTaskAttachmentInfo();
+                      if(response.update!=null || response.update!="null" || response.update!="0"){
+                          updateAttachmentimageId(response.update, attachment_doc_id );
+                      }else{
+                         updateAttachmentimageId("0", attachment_doc_id );
+                      }
                   }catch(err){}
                 } else {
                       try{
                          loopval=loopval+1;
                          getOfflineSavedImage();
-                         deleteTaskAttachmentInfo();
+                      
+                         //deleteTaskAttachmentInfo();
                       }catch(err){}
                   console.log("Unable to connect..!!", "WorkWide");
                    hideLoadingIcon()
@@ -6773,7 +6807,27 @@ function upload_offline_Images(parameters){
               }
    });
 }
+
                                                                          
+function updateAttachmentimageId(imageId, attachmentInfoId ){
+             var db = window.openDatabase("database_Workwide", "1.0", "database_Workwide_table", 2 * 1024 * 1024)
+             db.transaction(success_Workwide, error_Workwide);
+             
+             function success_Workwide(tx) {
+             
+             var query="";
+             if(imageId=="0"){
+             query="UPDATE AttachmentDocInfo SET synced = '1' WHERE attachment_doc_id = '"+attachmentInfoId+"' ";
+             }
+             else{
+             query="UPDATE AttachmentDocInfo SET imageId = '"+imageId+"', synced = '1' WHERE attachment_doc_id = '"+attachmentInfoId+"' ";
+             }
+             console.log("UPDATE IMAGE ID : "+query);
+             tx.executeSql(query);
+             
+    }
+             
+}
 //----------------------------- End Offline Attachment Information ----------------------------------------
                                                                          
                            

@@ -166,6 +166,17 @@
         return;
       }
 
+      var lastScrollTop = 0;
+      $(window).scroll(function(event){
+              var st = $(this).scrollTop();
+              if (st > lastScrollTop){
+              // downscroll code
+              } else {
+              // upscroll code
+              return;
+              }
+              lastScrollTop = st;
+        });
       if (!_shared.pullStartY) {
         if (_el.shouldPullToRefresh()) {
           _shared.pullStartY = e.touches[0].screenY;
