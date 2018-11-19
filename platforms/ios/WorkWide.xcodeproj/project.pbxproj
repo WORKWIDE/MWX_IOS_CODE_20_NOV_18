@@ -18,6 +18,7 @@
 		302D95F114D2391D003F00A1 /* MainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 302D95EF14D2391D003F00A1 /* MainViewController.m */; };
 		302D95F214D2391D003F00A1 /* MainViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 302D95F014D2391D003F00A1 /* MainViewController.xib */; };
 		3912173D20DD1FE100BFDADD /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3912173C20DD1FE100BFDADD /* StoreKit.framework */; };
+		391FB828219C0A4000AA5FEC /* GameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 391FB827219C0A4000AA5FEC /* GameKit.framework */; };
 		48624D500EE94E24AFF8821E /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F9997CDE747A4D209438BEA7 /* CoreTelephony.framework */; };
 		4ECBAD09B8A84159B7BE6AB6 /* CDVViewController+SplashScreen.m in Sources */ = {isa = PBXBuildFile; fileRef = 04412A0A91CD4AE3AC1A2BBC /* CDVViewController+SplashScreen.m */; };
 		56F39FCB0FA147DA8D6961F2 /* CDVJpegHeaderWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = DC33B7F3C5784612B68017F9 /* CDVJpegHeaderWriter.m */; };
@@ -94,6 +95,7 @@
 		346133C5424940A2B136A384 /* CDVFile.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = CDVFile.h; path = "cordova-plugin-file/CDVFile.h"; sourceTree = "<group>"; };
 		36D0F820032149E99397AB42 /* PushPlugin.m */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.objc; name = PushPlugin.m; path = "phonegap-plugin-push/PushPlugin.m"; sourceTree = "<group>"; };
 		3912173C20DD1FE100BFDADD /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		391FB827219C0A4000AA5FEC /* GameKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameKit.framework; path = System/Library/Frameworks/GameKit.framework; sourceTree = SDKROOT; };
 		3EC68DA348424C3CA7BB000B /* AppDelegate+notification.m */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.objc; name = "AppDelegate+notification.m"; path = "phonegap-plugin-push/AppDelegate+notification.m"; sourceTree = "<group>"; };
 		3F4BBC6ED7A3442C883A255F /* CDVConnection.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = CDVConnection.h; path = "cordova-plugin-network-information/CDVConnection.h"; sourceTree = "<group>"; };
 		43CC57D0845045F09C25BA54 /* CDVLocation.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = CDVLocation.h; path = "cordova-plugin-geolocation/CDVLocation.h"; sourceTree = "<group>"; };
@@ -136,6 +138,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				391FB828219C0A4000AA5FEC /* GameKit.framework in Frameworks */,
 				301BF552109A68D80062928A /* libCordova.a in Frameworks */,
 				F1710088F3F94639ABD0E4AB /* ImageIO.framework in Frameworks */,
 				D032ED32F61242A297262A29 /* CoreLocation.framework in Frameworks */,
@@ -215,6 +218,7 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				391FB827219C0A4000AA5FEC /* GameKit.framework */,
 				3912173C20DD1FE100BFDADD /* StoreKit.framework */,
 				697375A569534703ABC31AA3 /* ImageIO.framework */,
 				A9D7A835C5404F069B0A9593 /* CoreLocation.framework */,
@@ -330,6 +334,9 @@
 				TargetAttributes = {
 					1D6058900D05DD3D006BFB54 = {
 						SystemCapabilities = {
+							com.apple.GameCenter.iOS = {
+								enabled = 1;
+							};
 							com.apple.InAppPurchase = {
 								enabled = 1;
 							};
@@ -338,6 +345,9 @@
 							};
 							com.apple.Push = {
 								enabled = 1;
+							};
+							com.apple.VPNLite = {
+								enabled = 0;
 							};
 						};
 					};
@@ -475,8 +485,10 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
-				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				"CODE_SIGN_ENTITLEMENTS[sdk=*]" = "$(PROJECT_DIR)/$(PROJECT_NAME)/Entitlements-$(CONFIGURATION).plist";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = YES;
 				DEVELOPMENT_TEAM = 23Z379MYCT;
@@ -506,8 +518,10 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				"CODE_SIGN_ENTITLEMENTS[sdk=*]" = "$(PROJECT_DIR)/$(PROJECT_NAME)/Entitlements-$(CONFIGURATION).plist";
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = YES;
 				DEVELOPMENT_TEAM = 23Z379MYCT;
