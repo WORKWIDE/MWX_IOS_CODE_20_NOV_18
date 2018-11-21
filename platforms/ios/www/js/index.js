@@ -636,6 +636,7 @@ $(document).on("pageshow", function(event, data) {
 			$("#offline_imageprofile_one").css("display", "block");
 			$(".fsename").html(localStorage.getItem("name"));
 			$(".profile_fsename").html(localStorage.getItem("name"));
+            $("#offline_imageprofile_one").css("display", "block");
 			var img = document.getElementById("offline_imageprofile_one");
 			img.src = "";
 			img.src = cordova.file.applicationStorageDirectory + "Documents/" + "entity.png";
@@ -844,12 +845,14 @@ function showAlert(alertmessage, title, callBack_func) {
 //var webServiceUrl = "http://qwork-dev2.quintica.com/Api/";
 
 //var webServiceUrl= "http://172.16.5.151/Qmobility3/Api/";
+
 //Staging server
 //var webServiceUrl="http://qwork-demo.quintica.com/Api/";
-//var webServiceUrl="http://app.workwidemobile.com/Api/";
+var webServiceUrl="http://app.workwidemobile.com/Api/";
 
 //local server
-var webServiceUrl = "http://192.168.1.149/quintica/Api/";
+//var webServiceUrl = "http://192.168.1.149/quintica/Api/";
+//var webServiceUrl="http://192.168.1.117/quintica_www/Api/";
 
 //test local server
 //var webServiceUrl = "http://192.168.1.114/quintica/Api/";
